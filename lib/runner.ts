@@ -1,33 +1,34 @@
-import { AsyncTaskQueue } from './asyncTestQueue';
+import * as path from 'path';
 import { RunnerOptions } from './runnerOptions';
-import { Test } from './test';
-import { TestResult } from './testResult';
+import { TestRun } from './testRun';
+
 
 export class Runner {
+    static instance: Runner;
+    readonly testRun: TestRun;
     private readonly options: RunnerOptions;
-    private readonly tests: Test[];
-    private static instance: Runner;
 
-    private constructor(options: RunnerOptions) {
-        this.options = options;
-        this.tests = [];
-    }
-
-    addTest(test: Test) {
-        this.tests.push(test);
-    }
-
-    async start() {
-        const asyncTestRunner = new AsyncTaskQueue(this.tests, this.options.threads);
-        const results: TestResult[] = await asyncTestRunner.run();
-        return results;
-    }
-
-    static init(options: RunnerOptions) {
+    static create(options: RunnerOptions) {
         this.instance = new Runner(options);
     }
 
-    static getInstance() {
-        return this.instance;
+    private constructor(options: RunnerOptions) {
+        this.options = options;
+        this.testRun = new TestRun({threads: options.threads});
+    }
+
+    async run() {
+        const specFiles = this.getSpecFiles();
+        for (const specFile of specFiles) {
+            require(specFile);
+        }
+        await this.testRun.start();
+    }
+
+    private getSpecFiles(): string[] {
+        // complex parse spec files wildcard
+        // return this.options.specs.performMagic.map(path => path.resolve(path));
+        // return [''];
+        return this.options.specs.map(specpath => path.resolve(specpath));
     }
 }

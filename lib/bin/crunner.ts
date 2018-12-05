@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as path from 'path';
-import { Runner } from '../runner';
 import * as yargs from 'yargs';
+import { Runner } from '../runner';
 
 
 const argv = yargs
@@ -14,7 +14,7 @@ const argv = yargs
     .argv;
 const specsPaths = [argv._[0]]; // complex parser for wildcards
 
-Runner.init({threads: argv.threads});
+Runner.create({threads: argv.threads, specs: argv._});
 
 const absolutePaths = specsPaths.map(relative => path.resolve(relative));
 
@@ -22,10 +22,10 @@ for (const specPath of absolutePaths) {
     require(specPath);
 }
 
-const runner = Runner.getInstance();
+const runner = Runner.instance;
 const startTime = new Date().getTime();
-runner.start().then(result => {
+runner.run().then(result => {
     console.log('RUNNER WORK FINISHED');
-    console.log(JSON.stringify(result.map(testResult => `${testResult.description} error - ${testResult.error && testResult.error.message}`), null, 3));
+    // console.log(JSON.stringify(result.map(testResult => `${testResult.description} error - ${testResult.error && testResult.error.message}`), null, 3));
     console.log('time taken', new Date().getTime() - startTime, 'ms');
 });
