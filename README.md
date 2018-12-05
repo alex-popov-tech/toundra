@@ -4,7 +4,7 @@ Concurrent test runner for Javascript written in Typescript.
 ## Core features
 * Easy concurrency for running tests in parallel - you need to specify how many threads you want to use and you are
 ready to go
-* (TBD) BeforeAll, AfterAll, BeforeEach, AfterEach hooks
+* BeforeAll, AfterAll, BeforeEach, AfterEach hooks
 * (TBD) jasmine-like test listeners (async listeners supported)
 
 ## Examples
