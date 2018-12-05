@@ -16,7 +16,6 @@ export class AsyncTaskQueue<T> {
             const tasksCount = this.tasks.length;
             const queueLimit = (this.asyncLimit && this.asyncLimit < tasksCount) ? this.asyncLimit : tasksCount;
 
-            console.log('async runner, starting', queueLimit, 'tasks')
             // start initial number of tasks
             for (let i = 0; i < queueLimit; i++) {
                 this.startTask(i, resolve);

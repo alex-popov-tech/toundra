@@ -1,16 +1,16 @@
 import { AsyncTaskQueue } from './asyncTestQueue';
+import { HookName } from './hookName';
 import { Hooks } from './hooks';
 import { Test } from './test';
 
 
 export class Suite {
-    readonly globalBeforeEach = new Hooks();
-    readonly globalAfterEach = new Hooks();
-
-    readonly localBeforeAll = new Hooks();
-    readonly localAfterAll = new Hooks();
-    readonly localBeforeEach = new Hooks();
-    readonly localAfterEach = new Hooks();
+    private readonly globalBeforeEach = new Hooks();
+    private readonly globalAfterEach = new Hooks();
+    private readonly BeforeAll = new Hooks();
+    private readonly AfterAll = new Hooks();
+    private readonly BeforeEach = new Hooks();
+    private readonly AfterEach = new Hooks();
 
     private readonly tests: Test[] = [];
     readonly description: string;
@@ -22,18 +22,21 @@ export class Suite {
     }
 
     async start(threads = 1) {
-        console.log(`suite ${this.description.toUpperCase()} started, threads ${threads}`)
-        await this.localBeforeAll.run();
+        await this.BeforeAll.run();
         const asyncTestRunner = new AsyncTaskQueue<Test>(this.tests, (test) => test.start(), threads);
         const results = await asyncTestRunner.runAll();
         // for (const test of this.tests) {
         //     await test.start();
         // }
-        await this.localAfterAll.run();
+        await this.AfterAll.run();
     }
 
     addTest(description: string, body: () => void | Promise<void>) {
-        const test = new Test(description, body, this.globalBeforeEach, this.localBeforeEach, this.localAfterEach, this.globalAfterEach);
+        const test = new Test(description, body, this.globalBeforeEach, this.globalAfterEach, this.BeforeEach, this.AfterEach);
         this.tests.push(test);
+    }
+
+    addHook(name: HookName, body: () => (void | Promise<void>)) {
+        this[name].add(body);
     }
 }

@@ -11,19 +11,19 @@ export namespace Api {
     }
 
     export function BeforeAll(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.globalBeforeAll.add(hook);
+        Runner.instance.testRun.addHook('BeforeAll', hook);
     }
 
     export function AfterAll(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.globalAfterAll.add(hook);
+        Runner.instance.testRun.addHook('AfterAll', hook);
     }
 
     export function BeforeEach(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.globalBeforeEach.add(hook);
+        Runner.instance.testRun.addHook('BeforeEach', hook);
     }
 
-    export function AftereEach(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.globalAfterEach.add(hook);
+    export function AfterEach(hook: () => void | Promise<void>) {
+        Runner.instance.testRun.addHook('AfterEach', hook);
     }
 
 }
