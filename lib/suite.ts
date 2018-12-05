@@ -1,3 +1,4 @@
+import { AsyncTaskQueue } from './asyncTestQueue';
 import { Hooks } from './hooks';
 import { Test } from './test';
 
@@ -20,11 +21,14 @@ export class Suite {
         this.globalAfterEach = globalAfterEach;
     }
 
-    async start() {
+    async start(threads = 1) {
+        console.log(`suite ${this.description.toUpperCase()} started, threads ${threads}`)
         await this.localBeforeAll.run();
-        for (const test of this.tests) {
-            await test.start();
-        }
+        const asyncTestRunner = new AsyncTaskQueue<Test>(this.tests, (test) => test.start(), threads);
+        const results = await asyncTestRunner.runAll();
+        // for (const test of this.tests) {
+        //     await test.start();
+        // }
         await this.localAfterAll.run();
     }
 

@@ -1,52 +1,59 @@
-// export class AsyncTaskQueue {
-//     private readonly tests: Test[];
-//     private readonly asyncLimit: number;
-//     private readonly results: TestResult[];
-//
-//     constructor(tests: Test[], asyncLimit: number) {
-//         this.tests = tests;
-//         this.results = [];
-//         this.asyncLimit = asyncLimit;
-//     }
-//
-//     async run(): Promise<TestResult[]> {
-//         return new Promise<TestResult[]>(resolve => {
-//             const testsCount = this.tests.length;
-//             const maxThreads = (this.asyncLimit && this.asyncLimit < testsCount) ? this.asyncLimit : testsCount;
-//
-//             // start initial number of tasks
-//             for (let i = 0; i < maxThreads; i++) {
-//                 this.startTest(i, resolve);
-//             }
-//
-//         });
-//     }
-//
-//     private async startTest(testIndex: number, resolveCallback) {
-//         const test = this.tests[testIndex];
-//         test.body().then(
-//             result => this.handleTestResult(test.description, result, testIndex, resolveCallback),
-//             error => this.handleTestResult(test.description, error, testIndex, resolveCallback)
-//         );
-//     }
-//
-//     private handleTestResult(description: string, result: Error | void, index: number, resolveCallback) {
-//         this.saveTestResult(description, result);
-//
-//         // if last - return all results
-//         if (this.results.length === this.tests.length) {
-//             resolveCallback(this.results);
-//         }
-//
-//         // start new task after current if needed
-//         if (index + this.asyncLimit < this.tests.length) {
-//             this.startTest(index + this.asyncLimit, resolveCallback);
-//         }
-//     }
-//
-//     private saveTestResult(description: string, testResult: Error | void) {
-//         const isError = testResult instanceof Error;
-//         this.results.push({description: description, isSuccess: !isError, error: isError ? testResult as Error : null});
-//     }
-//
-// }
+export class AsyncTaskQueue<T> {
+    private readonly tasks: T[];
+    private readonly taskProcessor: (task: T) => any;
+    private readonly results: any[];
+    private readonly asyncLimit: number;
+
+    constructor(tasks: T[], taskProcessor: (task: T) => any, asyncLimit: number) {
+        this.tasks = tasks;
+        this.taskProcessor = taskProcessor;
+        this.results = [];
+        this.asyncLimit = asyncLimit;
+    }
+
+    async runAll(): Promise<any[]> {
+        return new Promise<any[]>(resolve => {
+            const tasksCount = this.tasks.length;
+            const queueLimit = (this.asyncLimit && this.asyncLimit < tasksCount) ? this.asyncLimit : tasksCount;
+
+            console.log('async runner, starting', queueLimit, 'tasks')
+            // start initial number of tasks
+            for (let i = 0; i < queueLimit; i++) {
+                this.startTask(i, resolve);
+            }
+        });
+    }
+
+    private async startTask(index: number, resolveCallback) {
+        const task = this.tasks[index];
+        this.taskProcessor(task).then(
+            this.resultHandlerCallback(index, resolveCallback),
+            this.resultHandlerCallback(index, resolveCallback)
+        );
+    }
+
+    private resultHandlerCallback(index: number, resolveCallback) {
+        return (result: void) => {
+            this.handleResult(result, index, resolveCallback);
+        };
+    }
+
+    private handleResult(result: Error | void, index: number, resolveCallback) {
+        this.saveTestResult(result);
+
+        // if last - return all results
+        if (this.results.length === this.tasks.length) {
+            resolveCallback(this.results);
+        }
+
+        // start new task after current if needed
+        if (index + this.asyncLimit < this.tasks.length) {
+            this.startTask(index + this.asyncLimit, resolveCallback);
+        }
+    }
+
+    private saveTestResult(result: Error | void) {
+        this.results.push(result);
+    }
+
+}

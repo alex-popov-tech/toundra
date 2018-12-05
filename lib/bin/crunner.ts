@@ -24,8 +24,9 @@ for (const specPath of absolutePaths) {
 
 const runner = Runner.instance;
 const startTime = new Date().getTime();
+console.log('RUNNER STARTED');
 runner.run().then(result => {
-    console.log('RUNNER WORK FINISHED');
+    console.log('RUNNER FINISHED');
     // console.log(JSON.stringify(result.map(testResult => `${testResult.description} error - ${testResult.error && testResult.error.message}`), null, 3));
     console.log('time taken', new Date().getTime() - startTime, 'ms');
 });

@@ -26,10 +26,12 @@ export class Test {
     }
 
     async start() {
+        console.log(`test ${this.description.toUpperCase()} started`)
         await this.globalBeforeEach.run();
         await this.localBeforeEach.run();
         await this.body();
         await this.localAfterEach.run();
         await this.globalAfterEach.run();
+        console.log(`test ${this.description.toUpperCase()} finished`)
     }
 }

@@ -19,7 +19,7 @@ export class TestRun {
     async start() {
         await this.globalBeforeAll.run();
         for (const suite of this.suites) {
-            await suite.start();
+            await suite.start(this.threads);
         }
         await this.globalAfterAll.run();
     }
@@ -39,7 +39,7 @@ export class TestRun {
         }
         let suite = this.suites.find(suite => suite.description === 'global');
         if (!suite) {
-            suite = new Suite('default', this.globalBeforeEach, this.globalAfterEach);
+            suite = new Suite('global', this.globalBeforeEach, this.globalAfterEach);
             this.suites.push(suite);
         }
         suite.addTest(description, body);
