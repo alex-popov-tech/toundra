@@ -25,9 +25,6 @@ export class Suite {
         await this.BeforeAll.run();
         const asyncTestRunner = new AsyncTaskQueue<Test>(this.tests, (test) => test.start(), threads);
         const results = await asyncTestRunner.runAll();
-        // for (const test of this.tests) {
-        //     await test.start();
-        // }
         await this.AfterAll.run();
     }
 

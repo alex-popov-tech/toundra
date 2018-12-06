@@ -4,7 +4,7 @@ export class AsyncTaskQueue<T> {
     private readonly results: any[];
     private readonly asyncLimit: number;
 
-    constructor(tasks: T[], taskProcessor: (task: T) => any, asyncLimit: number) {
+    constructor(tasks: T[], taskProcessor: (task: T) => any | Promise<any>, asyncLimit: number) {
         this.tasks = tasks;
         this.taskProcessor = taskProcessor;
         this.results = [];

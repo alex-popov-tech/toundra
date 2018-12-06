@@ -28,9 +28,7 @@ export class Test {
     async start() {
         await this.globalBeforeEach.run();
         await this.BeforeEach.run();
-        console.log(`test ${this.description.toUpperCase()} started`)
         await this.body();
-        console.log(`test ${this.description.toUpperCase()} finished`)
         await this.AfterEach.run();
         await this.globalAfterEach.run();
     }
