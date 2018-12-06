@@ -8,7 +8,8 @@ const failedsleep = async (ms) => {
     throw new Error('fail!');
 };
 
-
+// =======================================================================================
+// here 'foo' variable can have any value inside any test when running in concurrent mode
 // let foo = 'default';
 // new Array(20).fill(null).map((_, index) => index).forEach(index => {
 //     Test(`test${index}`, async () => {
@@ -18,7 +19,10 @@ const failedsleep = async (ms) => {
 //         console.log('finish test', index, foo);
 //     });
 // });
+// =======================================================================================
 
+// =======================================================================================
+// here all will behave as expected
 class Foo { value = 'default'; }
 new Array(20).fill(null).map((_, index) => index).forEach(index => {
     Test(`test${index}`, async () => {
@@ -29,7 +33,7 @@ new Array(20).fill(null).map((_, index) => index).forEach(index => {
         console.log('finish test', index, foo.value);
     });
 });
-
+// =======================================================================================
 
 // Suite('suite1', () => {
 //     BeforeAll(() => { console.log('SUITE 1 before all hook 1') });
