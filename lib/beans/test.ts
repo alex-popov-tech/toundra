@@ -1,19 +1,25 @@
+import { Action } from './action';
 import { TestResult } from './testResult';
 
 export class Test {
+    static DEFAULT = new Test(
+        'default test dummy',
+        () => {
+            throw new Error('Default test dummy was not overriden');
+        });
     readonly description: string;
-    readonly body: () => void | Promise<void>;
+    readonly action: Action;
 
     constructor(
         description: string,
-        body: () => (void | Promise<void>)
+        action: Action
     ) {
         this.description = description;
-        this.body = body;
+        this.action = action;
     }
 
     async run(): Promise<TestResult> {
-        const result = await this.body();
+        const result = await this.action();
         return {
             description: this.description,
             error: null

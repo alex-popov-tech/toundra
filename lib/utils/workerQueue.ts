@@ -1,4 +1,4 @@
-import * as path from 'path';
+import { Configuration } from '../configuration';
 import { WorkerUtils } from './workerUtils';
 
 
@@ -6,7 +6,6 @@ export class WorkerQueue {
     private readonly threads: number;
     private readonly testNames: string[];
     private readonly results: any[] = [];
-    private static BIN_PATH: string = path.resolve('./built/bin/crunner.js');
 
     constructor(testNames: string[], threads = 1) {
         this.testNames = testNames;
@@ -27,7 +26,7 @@ export class WorkerQueue {
 
     private startTest(testIndex: number, queueCallback) {
         const testName = this.testNames[testIndex];
-        WorkerUtils.asyncStartWorker(WorkerQueue.BIN_PATH, {testName: testName}).then(
+        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {testName: testName}).then(
             result => {
                 this.results.push(result);
 

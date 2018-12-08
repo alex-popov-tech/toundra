@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // @ts-ignore
 import { isMainThread } from 'worker_threads';
-import * as path from 'path';
+import { Configuration } from '../configuration';
 
-const executorPath = path.resolve(`./built/${isMainThread ? 'master' : 'slave'}/execute.js`);
-require(executorPath);
+require(isMainThread ? Configuration.MASTER_EXECUTOR_PATH : Configuration.WORKER_EXECUTOR_PATH);

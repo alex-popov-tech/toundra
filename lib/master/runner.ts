@@ -1,21 +1,22 @@
 import * as path from 'path';
+import { Action } from '../beans/action';
 import { RunnerOptions } from './runnerOptions';
-import { TestRun } from './testRun';
+import { Run } from './run';
 
 
 export class Runner {
     static instance: Runner;
-    readonly testRun: TestRun;
+    private readonly testRun: Run;
     private readonly options: RunnerOptions;
 
-    static create(options: RunnerOptions) {
+    static initialize(options: RunnerOptions) {
         Runner.instance = new Runner(options);
         return Runner.instance;
     }
 
     private constructor(options: RunnerOptions) {
         this.options = options;
-        this.testRun = new TestRun({threads: options.threads});
+        this.testRun = new Run(options);
     }
 
     async run() {
@@ -23,8 +24,8 @@ export class Runner {
         return this.testRun.run();
     }
 
-    addTest(description: string, body: () => void | Promise<void>) {
-        this.testRun.addTest(description, body);
+    addTest(description: string, action: Action) {
+        this.testRun.addTest(description, action);
     }
 
     private initTestsTree() {
