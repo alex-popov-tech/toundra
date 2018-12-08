@@ -1,0 +1,1 @@
+export type TestResult = { description: string, error?: Error };

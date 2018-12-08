@@ -1,29 +1,16 @@
-import { Runner } from './runner';
+// @ts-ignore
+import { isMainThread } from 'worker_threads';
+import { Runner } from './master/runner';
+import { SingleTestRunner } from './slave/singleTestRunner';
 
 export namespace Api {
 
-    export function Suite(description: string, body: () => void | Promise<void>) {
-        Runner.instance.testRun.addSuite(description, body);
-    }
-
     export function Test(description: string, body: () => void | Promise<void>) {
-        Runner.instance.testRun.addTest(description, body);
-    }
-
-    export function BeforeAll(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.addHook('BeforeAll', hook);
-    }
-
-    export function AfterAll(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.addHook('AfterAll', hook);
-    }
-
-    export function BeforeEach(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.addHook('BeforeEach', hook);
-    }
-
-    export function AfterEach(hook: () => void | Promise<void>) {
-        Runner.instance.testRun.addHook('AfterEach', hook);
+        if (isMainThread) {
+            Runner.instance.addTest(description, body);
+        } else {
+            SingleTestRunner.instance.addTest(description, body);
+        }
     }
 
 }

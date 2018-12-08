@@ -1,38 +1,50 @@
 import { Api } from './api';
+
 const Test = Api.Test;
 
 
-const sleep = async (ms) => { await new Promise(resolve => setTimeout(resolve, ms)); };
+const sleep = async (ms) => {
+    await new Promise(resolve => setTimeout(resolve, ms));
+};
 const failedsleep = async (ms) => {
     await sleep(ms);
     throw new Error('fail!');
 };
 
-// =======================================================================================
-// here 'foo' variable can have any value inside any test when running in concurrent mode
-// let foo = 'default';
-// new Array(20).fill(null).map((_, index) => index).forEach(index => {
-//     Test(`test${index}`, async () => {
-//         console.log('start test', index, foo);
-//         foo = `test${index}`;
-//         await sleep(500);
-//         console.log('finish test', index, foo);
+
+// new Array(50).fill(null).map((_, index) => index).forEach(index => {
+//     Test(`test ${index}`, async () => {
+//         console.log('TEST STARTED', index);
+//         await sleep(1000);
+//         console.log('TEST FINISHED', index);
 //     });
 // });
+
+// =======================================================================================
+// here 'foo' variable can have any value inside any test when running in concurrent mode
+let foo = 'default';
+new Array(20).fill(null).map((_, index) => index).forEach(index => {
+    Test(`test${index}`, async () => {
+        console.log('run test', index, foo);
+        foo = `test${index}`;
+        await sleep(500);
+        console.log('finish test', index, foo);
+    });
+});
 // =======================================================================================
 
 // =======================================================================================
 // here all will behave as expected
-class Foo { value = 'default'; }
-new Array(20).fill(null).map((_, index) => index).forEach(index => {
-    Test(`test${index}`, async () => {
-        let foo = new Foo();
-        console.log('start test', index, foo.value);
-        foo.value = `test${index}`;
-        await sleep(500);
-        console.log('finish test', index, foo.value);
-    });
-});
+// class Foo { value = 'default'; }
+// new Array(10).fill(null).map((_, index) => index).forEach(index => {
+//     Test(`test${index}`, async () => {
+//         let foo = new Foo();
+//         console.log('run test', index, foo.value);
+//         foo.value = `test${index}`;
+//         await sleep(500);
+//         console.log('finish test', index, foo.value);
+//     });
+// });
 // =======================================================================================
 
 // Suite('suite1', () => {

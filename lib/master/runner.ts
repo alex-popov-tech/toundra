@@ -9,7 +9,8 @@ export class Runner {
     private readonly options: RunnerOptions;
 
     static create(options: RunnerOptions) {
-        this.instance = new Runner(options);
+        Runner.instance = new Runner(options);
+        return Runner.instance;
     }
 
     private constructor(options: RunnerOptions) {
@@ -18,14 +19,23 @@ export class Runner {
     }
 
     async run() {
+        this.initTestsTree();
+        return this.testRun.run();
+    }
+
+    addTest(description: string, body: () => void | Promise<void>) {
+        this.testRun.addTest(description, body);
+    }
+
+    private initTestsTree() {
         const specFiles = this.getSpecFiles();
         for (const specFile of specFiles) {
             require(specFile);
         }
-        await this.testRun.start();
     }
 
     private getSpecFiles(): string[] {
+        // TODO complex parser for wildcards
         // complex parse spec files wildcard
         // return this.options.specs.performMagic.map(path => path.resolve(path));
         // return [''];
