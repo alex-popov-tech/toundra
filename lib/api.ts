@@ -13,4 +13,28 @@ export namespace Api {
         }
     }
 
+    export function BeforeAll(hook: () => void | Promise<void>) {
+        if (isMainThread) {
+            MasterRunner.instance.addHook('BeforeAll', hook);
+        }
+    }
+
+    export function AfterAll(hook: () => void | Promise<void>) {
+        if (isMainThread) {
+            MasterRunner.instance.addHook('AfterAll', hook);
+        }
+    }
+
+    export function BeforeEach(hook: () => void | Promise<void>) {
+        if (!isMainThread) {
+            WorkerRunner.instance.addHook('BeforeEach', hook);
+        }
+    }
+
+    export function AfterEach(hook: () => void | Promise<void>) {
+        if (!isMainThread) {
+            WorkerRunner.instance.addHook('AfterEach', hook);
+        }
+    }
+
 }

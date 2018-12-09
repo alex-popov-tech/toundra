@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { Action } from '../beans/action';
+import { HookType } from '../beans/hookType';
 import { RunnerOptions } from './runnerOptions';
 import { Run } from './run';
 
@@ -26,6 +27,10 @@ export class Runner {
 
     addTest(description: string, action: Action) {
         this.testRun.addTest(description, action);
+    }
+
+    addHook(type: HookType, action: Action) {
+        this.testRun.addHook(type, action);
     }
 
     private initTestsTree() {

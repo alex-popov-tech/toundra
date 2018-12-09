@@ -1,4 +1,8 @@
 import { Api } from './api';
+import BeforeAll = Api.BeforeAll;
+import AfterAll = Api.AfterAll;
+import BeforeEach = Api.BeforeEach;
+import AfterEach = Api.AfterEach;
 
 const Test = Api.Test;
 
@@ -12,25 +16,41 @@ const failedsleep = async (ms) => {
 };
 
 
-// new Array(50).fill(null).map((_, index) => index).forEach(index => {
-//     Test(`test ${index}`, async () => {
-//         console.log('TEST STARTED', index);
-//         await sleep(1000);
-//         console.log('TEST FINISHED', index);
-//     });
-// });
+BeforeAll(async () => {
+    console.log('before all')
+});
+
+AfterAll(async () => {
+    console.log('after all')
+});
+
+BeforeEach(async () => {
+    console.log('before each')
+});
+
+AfterEach(async () => {
+    console.log('after each')
+});
+
+new Array(20).fill(null).map((_, index) => index).forEach(index => {
+    Test(`test ${index}`, async () => {
+        console.log('TEST STARTED', index);
+        await sleep(500);
+        console.log('TEST FINISHED', index);
+    });
+});
 
 // =======================================================================================
 // here 'foo' variable can have any value inside any test when running in concurrent mode
-let foo = 'default';
-new Array(20).fill(null).map((_, index) => index).forEach(index => {
-    Test(`test${index}`, async () => {
-        console.log('run test', index, foo);
-        foo = `test${index}`;
-        await sleep(500);
-        console.log('finish test', index, foo);
-    });
-});
+// let foo = 'default';
+// new Array(20).fill(null).map((_, index) => index).forEach(index => {
+//     Test(`test${index}`, async () => {
+//         console.log('run test', index, foo);
+//         foo = `test${index}`;
+//         await sleep(500);
+//         console.log('finish test', index, foo);
+//     });
+// });
 // =======================================================================================
 
 // =======================================================================================
