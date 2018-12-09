@@ -1,20 +1,21 @@
+import { Test } from '../beans/test';
 import { Configuration } from '../configuration';
 import { WorkerUtils } from './workerUtils';
 
 
 export class WorkerQueue {
     private readonly threads: number;
-    private readonly testNames: string[];
+    private readonly tests: Test[];
     private readonly results: any[] = [];
 
-    constructor(testNames: string[], threads = 1) {
-        this.testNames = testNames;
+    constructor(tests: Test[], threads = 1) {
+        this.tests = tests;
         this.threads = threads;
     }
 
     async runAll(): Promise<any[]> {
         return new Promise<any[]>(resolve => {
-            const tasksCount = this.testNames.length;
+            const tasksCount = this.tests.length;
             const queueLimit = (this.threads < tasksCount) ? this.threads : tasksCount;
 
             // start initial number of tests
@@ -25,18 +26,19 @@ export class WorkerQueue {
     }
 
     private startTest(testIndex: number, queueCallback) {
-        const testName = this.testNames[testIndex];
-        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {testName: testName}).then(
+        const testName = this.tests[testIndex].description;
+        const specPath = this.tests[testIndex].specFilePath;
+        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {testName: testName, specPath: specPath}).then(
             result => {
                 this.results.push(result);
 
                 // if last - return all results
-                if (this.testNames.length === this.results.length) {
+                if (this.tests.length === this.results.length) {
                     queueCallback(this.results);
                 }
 
                 // start new task after current if needed
-                if (testIndex + this.threads < this.testNames.length) {
+                if (testIndex + this.threads < this.tests.length) {
                     this.startTest(testIndex + this.threads, queueCallback);
                 }
             }

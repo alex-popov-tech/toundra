@@ -31,6 +31,7 @@ export class Runner {
     private initTestsTree() {
         const specFiles = this.getSpecFiles();
         for (const specFile of specFiles) {
+            this.testRun.currentSpecFile = specFile;
             require(specFile);
         }
     }

@@ -15,7 +15,7 @@ export class Run {
 
     addTest(description: string, body: () => void | Promise<void>) {
         if (this.options.testName === description) {
-            this.test = new Test(description, body);
+            this.test = new Test('', description, body);
         }
     }
 
