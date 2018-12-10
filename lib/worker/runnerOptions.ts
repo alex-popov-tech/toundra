@@ -1,4 +1,5 @@
 export type RunnerOptions = {
-    specPath: string,
-    testName: string
+    suiteName: string,
+    testName: string,
+    specPath: string
 };

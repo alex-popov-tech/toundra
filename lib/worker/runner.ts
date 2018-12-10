@@ -1,11 +1,12 @@
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
+import { SyncAction } from '../beans/syncAction';
 import { Run } from './run';
 import { RunnerOptions } from './runnerOptions';
 
 export class Runner {
     static instance: Runner;
-    private readonly testRun: Run;
+    private readonly testrun: Run;
     private readonly options: RunnerOptions;
 
     static initialize(options: RunnerOptions): Runner {
@@ -15,20 +16,24 @@ export class Runner {
 
     private constructor(options: RunnerOptions) {
         this.options = options;
-        this.testRun = new Run(options);
+        this.testrun = new Run(options);
     }
 
-    async runTest() {
+    async run() {
         this.initTestsTree();
-        return this.testRun.runTest();
+        return this.testrun.run();
     }
 
-    addTest(description: string, action: Action) {
-        this.testRun.addTest(description, action);
+    addTest(name: string, action: Action) {
+        this.testrun.addTest(name, action);
+    }
+
+    addSuite(name: string, action: SyncAction) {
+        this.testrun.addSuite(name, action);
     }
 
     addHook(type: HookType, action: Action) {
-        this.testRun.addHook(type, action);
+        this.testrun.addHook(type, action);
     }
 
     private initTestsTree() {

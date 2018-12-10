@@ -1,5 +1,5 @@
-import { Test } from '../beans/test';
 import { Configuration } from '../configuration';
+import { Test } from '../master/beans/test';
 import { WorkerUtils } from './workerUtils';
 
 
@@ -13,7 +13,7 @@ export class WorkerQueue {
         this.threads = threads;
     }
 
-    async runAll(): Promise<any[]> {
+    async run(): Promise<any[]> {
         return new Promise<any[]>(resolve => {
             const tasksCount = this.tests.length;
             const queueLimit = (this.threads < tasksCount) ? this.threads : tasksCount;
@@ -26,7 +26,7 @@ export class WorkerQueue {
     }
 
     private startTest(testIndex: number, queueCallback) {
-        const testName = this.tests[testIndex].description;
+        const testName = this.tests[testIndex].name;
         const specPath = this.tests[testIndex].specFilePath;
         WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {testName: testName, specPath: specPath}).then(
             result => {

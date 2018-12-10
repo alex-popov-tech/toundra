@@ -1,13 +1,14 @@
 import * as path from 'path';
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
+import { SyncAction } from '../beans/syncAction';
 import { RunnerOptions } from './runnerOptions';
 import { Run } from './run';
 
 
 export class Runner {
     static instance: Runner;
-    private readonly testRun: Run;
+    private readonly testrun: Run;
     private readonly options: RunnerOptions;
 
     static initialize(options: RunnerOptions) {
@@ -17,26 +18,30 @@ export class Runner {
 
     private constructor(options: RunnerOptions) {
         this.options = options;
-        this.testRun = new Run(options);
+        this.testrun = new Run(options.threads);
     }
 
     async run() {
         this.initTestsTree();
-        return this.testRun.run();
+        return this.testrun.run();
     }
 
-    addTest(description: string, action: Action) {
-        this.testRun.addTest(description, action);
+    addSuite(name: string, action: SyncAction) {
+        this.testrun.addSuite(name, action);
+    }
+
+    addTest(name: string, action: Action) {
+        this.testrun.addTest(name, action);
     }
 
     addHook(type: HookType, action: Action) {
-        this.testRun.addHook(type, action);
+        this.testrun.addHook(type, action);
     }
 
     private initTestsTree() {
         const specFiles = this.getSpecFiles();
         for (const specFile of specFiles) {
-            this.testRun.currentSpecFile = specFile;
+            this.testrun.currentSpecFile = specFile;
             require(specFile);
         }
     }

@@ -5,7 +5,7 @@ import { Runner } from './runner';
 
 // const {testName} = workerData;
 // const specPath = require('path').resolve('./built/spec.js');
-const {testName, specPath} = workerData;
-Runner.initialize({specPath: specPath, testName: testName}).runTest().then(result => {
+const {specPath, suiteName, testName} = workerData;
+Runner.initialize({specPath: specPath, suiteName: suiteName, testName: testName}).run().then(result => {
     parentPort.postMessage(result);
 });
