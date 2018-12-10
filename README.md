@@ -43,7 +43,7 @@ RUNNER FINISHED, time taken - 10805ms
 ==================================
 ```
 
-Okay, lets try to increase workers count in two times (previously there was single one, now there will be two):
+Okay, lets try to increase thread count in two times (previously there was single one, now there will be two):
 ```
 npm run build && node ./built/bin/crunner.js --threads 2 ./built/demo.js
 
@@ -82,4 +82,4 @@ RUNNER FINISHED, time taken - 1277ms
 ==================================
 ```
 
-Yeap, this is an demo of test runner for NodeJS, which can do parallel testing THAT EASY.
+Yeap, this is a demo of test runner for NodeJS, which can do parallel testing THAT EASY.
