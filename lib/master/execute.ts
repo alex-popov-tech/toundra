@@ -12,7 +12,9 @@ const argv = yargs
     .argv;
 
 const startTime = new Date().getTime();
+console.log('==================================')
 console.log(`RUNNER STARTED`);
+console.log('==================================')
 Runner.initialize({threads: argv.threads, specs: argv._}).run().then(_ => {
     console.log('==================================')
     console.log(`RUNNER FINISHED, time taken - ${new Date().getTime() - startTime}ms`);

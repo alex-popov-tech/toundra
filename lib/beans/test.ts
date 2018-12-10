@@ -10,7 +10,7 @@ export class Test {
         });
     readonly description: string;
     readonly action: Action;
-    readonly specFilePath: string
+    readonly specFilePath: string;
 
     constructor(
         specFilePath: string,
