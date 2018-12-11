@@ -1,6 +1,6 @@
 # Samael
 
-Concurrent test runner for Javascript written in Typescript.
+Test runner for Javascript with parallelization support.
 
 ## Core features
 * Easy concurrency for running tests in parallel - you need to specify how many threads you want to use and you are
