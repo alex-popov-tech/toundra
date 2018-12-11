@@ -1,4 +1,5 @@
 # Samael
+
 Concurrent test runner for Javascript written in Typescript.
 
 ## Core features
@@ -103,4 +104,4 @@ RUNNER FINISHED, time taken - 2553ms
 ==================================
 ```
 
-Yeap, this is an demo of test runner for NodeJS, which can do parallel testing THAT EASY.
+Yeap, this is a demo of test runner for NodeJS, which can do parallel testing THAT EASY.
