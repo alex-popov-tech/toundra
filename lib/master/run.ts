@@ -1,6 +1,7 @@
 import { Action } from '../beans/action';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
+import { Configuration } from '../configuration';
 import { Suite } from './beans/suite';
 
 
@@ -59,9 +60,9 @@ export class Run {
     }
 
     private addGlobalTest(name: string, action: Action) {
-        let suite = this.suites.find(suite => Suite.DEFAULT_NAME === suite.name);
+        let suite = this.suites.find(suite => Configuration.DEFAULT_SUITE_NAME === suite.name);
         if (!suite) {
-            suite = new Suite(Suite.DEFAULT_NAME, this.threads);
+            suite = new Suite(Configuration.DEFAULT_SUITE_NAME, this.threads);
             this.suites.push(suite);
         }
         suite.addTest(name, action, this.currentSpecFile);

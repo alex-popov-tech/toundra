@@ -7,8 +7,6 @@ import { Test } from './test';
 
 export class Suite {
 
-    static readonly DEFAULT_NAME = 'default';
-
     private readonly beforeAll = new Hooks<'BeforeAll'>();
     private readonly afterAll = new Hooks<'AfterAll'>();
 
@@ -23,7 +21,7 @@ export class Suite {
 
     async run() {
         await this.beforeAll.run();
-        await new WorkerQueue(this.tests, this.threads).run();
+        await new WorkerQueue(this.name, this.tests, this.threads).run();
         await this.afterAll.run();
     }
 

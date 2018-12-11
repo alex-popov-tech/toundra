@@ -2,6 +2,7 @@ import { Action } from '../beans/action';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
 import { SyncAction } from '../beans/syncAction';
+import { Configuration } from '../configuration';
 import { RunOptions } from './runOptions';
 import { Test } from './test';
 
@@ -13,12 +14,13 @@ export class Run {
     private readonly globalAfterEach = new Hooks<'AfterEach'>();
     private readonly beforeEach = new Hooks<'BeforeEach'>();
     private readonly afterEach = new Hooks<'AfterEach'>();
-    private expectedSuiteFound = false;
-    private expectedTestFound = false;
+    private isExpectedSuiteContext = false;
+    private isExpectedTestFound = false;
     private test: Test = null;
 
     constructor(options: RunOptions) {
         this.options = options;
+        this.isExpectedSuiteContext = options.suiteName === Configuration.DEFAULT_SUITE_NAME;
     }
 
     async run() {
@@ -30,26 +32,34 @@ export class Run {
     }
 
     addSuite(name: string, action: SyncAction) {
-        if (!this.expectedTestFound && this.options.suiteName === this.options.suiteName) {
-            this.expectedSuiteFound = true;
+        if (
+            !this.isExpectedTestFound &&
+            !this.isExpectedSuiteContext &&
+            this.options.suiteName === this.options.suiteName
+        ) {
+            this.isExpectedSuiteContext = true;
             action();
-            this.expectedSuiteFound = false;
+            this.isExpectedSuiteContext = false;
         }
     }
 
     addTest(name: string, action: Action) {
-        if (!this.expectedTestFound && this.expectedSuiteFound && this.options.testName === name) {
+        if (
+            !this.isExpectedTestFound &&
+            this.isExpectedSuiteContext &&
+            this.options.testName === name
+        ) {
             this.test = new Test(name, action);
-            this.expectedTestFound = true;
+            this.isExpectedTestFound = true;
         }
     }
 
     addHook(type: HookType, action: Action) {
         if (type === 'BeforeEach') {
-            if (this.expectedSuiteFound) this.beforeEach.add(action);
+            if (this.isExpectedSuiteContext) this.beforeEach.add(action);
             else this.globalBeforeEach.add(action);
         } else {
-            if (this.expectedSuiteFound) this.afterEach.add(action);
+            if (this.isExpectedSuiteContext) this.afterEach.add(action);
             else this.globalAfterEach.add(action);
         }
     }

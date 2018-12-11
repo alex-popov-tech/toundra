@@ -5,12 +5,14 @@ import { WorkerUtils } from './workerUtils';
 
 export class WorkerQueue {
     private readonly threads: number;
+    private readonly suiteName: string;
     private readonly tests: Test[];
     private readonly results: any[] = [];
 
-    constructor(tests: Test[], threads = 1) {
-        this.tests = tests;
+    constructor(suiteName: string, tests: Test[], threads = 1) {
+        this.suiteName = suiteName;
         this.threads = threads;
+        this.tests = tests;
     }
 
     async run(): Promise<any[]> {
@@ -28,7 +30,11 @@ export class WorkerQueue {
     private startTest(testIndex: number, queueCallback) {
         const testName = this.tests[testIndex].name;
         const specPath = this.tests[testIndex].specFilePath;
-        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {testName: testName, specPath: specPath}).then(
+        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {
+            specPath: specPath,
+            suiteName: this.suiteName,
+            testName: testName
+        }).then(
             result => {
                 this.results.push(result);
 
