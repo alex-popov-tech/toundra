@@ -1,10 +1,12 @@
 import { Action } from '../beans/action';
+import { ActionError } from '../beans/actionError';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
 import { SyncAction } from '../beans/syncAction';
 import { Configuration } from '../configuration';
+import { Test } from './beans/test';
+import { TestResult } from './beans/testResult';
 import { RunOptions } from './runOptions';
-import { Test } from './test';
 
 
 export class Run {
@@ -23,12 +25,26 @@ export class Run {
         this.isExpectedSuiteContext = options.suiteName === Configuration.DEFAULT_SUITE_NAME;
     }
 
-    async run() {
-        await this.globalBeforeEach.run();
-        await this.beforeEach.run();
-        await this.test.run();
-        await this.afterEach.run();
-        await this.globalAfterEach.run();
+    async run(): Promise<TestResult> {
+        let testError: ActionError = null;
+        try {
+            await this.globalBeforeEach.run();
+            await this.beforeEach.run();
+            await this.test.run();
+            await this.afterEach.run();
+            await this.globalAfterEach.run();
+        } catch (error) {
+            testError = {
+                message: error.message,
+                stack: error.stack
+            };
+        }
+
+        return {
+            name: this.test.name,
+            status: testError ? 'failed' : 'passed',
+            error: testError
+        };
     }
 
     addSuite(name: string, action: SyncAction) {

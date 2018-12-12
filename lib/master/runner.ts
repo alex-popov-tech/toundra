@@ -2,6 +2,7 @@ import * as path from 'path';
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
 import { SyncAction } from '../beans/syncAction';
+import { SuitesResult } from './beans/suitesResult';
 import { RunnerOptions } from './runnerOptions';
 import { Run } from './run';
 
@@ -21,7 +22,7 @@ export class Runner {
         this.testrun = new Run(options.threads);
     }
 
-    async run() {
+    async run(): Promise<SuitesResult> {
         this.initTestsTree();
         return this.testrun.run();
     }

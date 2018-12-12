@@ -3,25 +3,48 @@ import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
 import { Configuration } from '../configuration';
 import { Suite } from './beans/suite';
+import { SuitesResult } from './beans/suitesResult';
 
 
 export class Run {
 
-    currentSpecFile: string;
     private readonly globalBeforeAll = new Hooks<'BeforeAll'>();
     private readonly globalAfterAll = new Hooks<'AfterAll'>();
+    private readonly result: SuitesResult = {error: null, suites: []};
     private readonly threads: number;
     private readonly suites: Suite[] = [];
     private currentSuite: Suite;
+    currentSpecFile: string;
 
     constructor(threads: number) {
         this.threads = threads;
     }
 
-    async run() {
-        await this.globalBeforeAll.run();
-        for (const suite of this.suites) await suite.run();
-        await this.globalAfterAll.run();
+    async run(): Promise<SuitesResult> {
+        try {
+            await this.globalBeforeAll.run();
+        } catch (error) {
+            this.result.error = {
+                message: error.message,
+                stack: error.stack
+            };
+            return this.result;
+        }
+
+        for (const suite of this.suites) {
+            this.result.suites.push(await suite.run());
+        }
+
+        try {
+            await this.globalAfterAll.run();
+        } catch (error) {
+            this.result.error = {
+                message: error.message,
+                stack: error.stack
+            };
+        }
+
+        return this.result;
     }
 
     addSuite(name: string, action: Action) {

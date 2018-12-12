@@ -1,9 +1,9 @@
-import { Action } from '../beans/action';
+import { Action } from '../../beans/action';
 
 
 export class Test {
-    private readonly name: string;
-    private readonly action: Action;
+    readonly name: string;
+    readonly action: Action;
 
     constructor(name: string, action: Action) {
         this.name = name;

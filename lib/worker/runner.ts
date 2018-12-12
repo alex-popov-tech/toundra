@@ -1,6 +1,7 @@
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
 import { SyncAction } from '../beans/syncAction';
+import { TestResult } from './beans/testResult';
 import { Run } from './run';
 import { RunnerOptions } from './runnerOptions';
 
@@ -19,7 +20,7 @@ export class Runner {
         this.testrun = new Run(options);
     }
 
-    async run() {
+    async run(): Promise<TestResult> {
         this.initTestsTree();
         return this.testrun.run();
     }
