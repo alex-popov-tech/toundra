@@ -1,7 +1,8 @@
 import { ActionError } from '../../beans/actionError';
+import { TestStatus } from '../../beans/testStatus';
 
 export type TestResult = {
     name: string,
-    status: 'passed' | 'failed' | 'ignored',
+    status: TestStatus,
     error?: ActionError
 }

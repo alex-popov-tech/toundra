@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
+import { Listener } from '../beans/listener';
 import { SyncAction } from '../beans/syncAction';
 import { SuitesResult } from './beans/suitesResult';
 import { RunnerOptions } from './runnerOptions';
@@ -37,6 +38,10 @@ export class Runner {
 
     addHook(type: HookType, action: Action) {
         this.testrun.addHook(type, action);
+    }
+
+    addListener(listener: Listener) {
+        this.testrun.addListener(listener);
     }
 
     private initTestsTree() {

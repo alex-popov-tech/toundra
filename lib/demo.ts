@@ -1,9 +1,11 @@
 import { Api } from './api';
+import { OnStart } from './beans/results/onStart';
 import Suite = Api.Suite;
 import BeforeAll = Api.BeforeAll;
 import AfterAll = Api.AfterAll;
 import BeforeEach = Api.BeforeEach;
 import AfterEach = Api.AfterEach;
+import AddListener = Api.AddListener;
 
 const Test = Api.Test;
 
@@ -28,6 +30,15 @@ BeforeEach(() => { console.log('global before each'); });
 // BeforeEach(() => { console.log('global before each'); throw new Error('oops'); });
 AfterEach(() => { console.log('global after each'); });
 // AfterEach(() => { console.log('global after each'); throw new Error('oops'); });
+
+AddListener({
+    onStart: (result: OnStart) => console.log('on start', result),
+    onSuiteStart: (result) => console.log('on suite start', result),
+    onTestStart: (result) => console.log('on test start', result),
+    onTestFinish: (result) => console.log('on test finish', result),
+    onSuiteFinish: (result) => console.log('on suite finish', result),
+    onFinish: (result) => console.log('on finish', result)
+})
 
 // just tests, no suites required :)
 Test('my test 1', () => sleepWithMessage('test1'));

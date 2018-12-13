@@ -1,6 +1,7 @@
 import { Action } from '../beans/action';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
+import { Listener } from '../beans/listener';
 import { Configuration } from '../configuration';
 import { Suite } from './beans/suite';
 import { SuitesResult } from './beans/suitesResult';
@@ -10,6 +11,7 @@ export class Run {
 
     private readonly globalBeforeAll = new Hooks<'BeforeAll'>();
     private readonly globalAfterAll = new Hooks<'AfterAll'>();
+    private readonly listeners: Listener[] = [];
     private readonly result: SuitesResult = {error: null, suites: []};
     private readonly threads: number;
     private readonly suites: Suite[] = [];
@@ -21,6 +23,7 @@ export class Run {
     }
 
     async run(): Promise<SuitesResult> {
+        await Promise.all(this.listeners.map(async (listener) => await listener.onStart(null)));
         try {
             await this.globalBeforeAll.run();
         } catch (error) {
@@ -32,7 +35,13 @@ export class Run {
         }
 
         for (const suite of this.suites) {
+            if (suite.name !== Configuration.DEFAULT_SUITE_NAME) {
+                await Promise.all(this.listeners.map(async (listener) => await listener.onSuiteStart(null)));
+            }
             this.result.suites.push(await suite.run());
+            if (suite.name !== Configuration.DEFAULT_SUITE_NAME) {
+                await Promise.all(this.listeners.map(async (listener) => await listener.onSuiteFinish(null)));
+            }
         }
 
         try {
@@ -43,7 +52,7 @@ export class Run {
                 stack: error.stack
             };
         }
-
+        await Promise.all(this.listeners.map(async (listener) => await listener.onFinish(null)));
         return this.result;
     }
 
@@ -71,6 +80,14 @@ export class Run {
         } else if (type === 'AfterAll') {
             if (this.isLocalSuite()) this.currentSuite.addHook(type, action);
             else this.globalAfterAll.add(action);
+        }
+    }
+
+    addListener(listener: Listener) {
+        if (listener.onSuiteStart) {
+            this.listeners.push(listener);
+        } else if (listener.onSuiteFinish) {
+            this.listeners.push(listener);
         }
     }
 

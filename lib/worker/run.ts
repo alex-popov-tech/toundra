@@ -2,6 +2,7 @@ import { Action } from '../beans/action';
 import { ActionError } from '../beans/actionError';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
+import { Listener } from '../beans/listener';
 import { SyncAction } from '../beans/syncAction';
 import { Configuration } from '../configuration';
 import { Test } from './beans/test';
@@ -16,6 +17,7 @@ export class Run {
     private readonly globalAfterEach = new Hooks<'AfterEach'>();
     private readonly beforeEach = new Hooks<'BeforeEach'>();
     private readonly afterEach = new Hooks<'AfterEach'>();
+    private readonly listeners: Listener[] = [];
     private isExpectedSuiteContext = false;
     private isExpectedTestFound = false;
     private test: Test = null;
@@ -27,6 +29,7 @@ export class Run {
 
     async run(): Promise<TestResult> {
         let testError: ActionError = null;
+        await Promise.all(this.listeners.map(async (listener) => await listener.onTestStart(null)));
         try {
             await this.globalBeforeEach.run();
             await this.beforeEach.run();
@@ -39,6 +42,7 @@ export class Run {
                 stack: error.stack
             };
         }
+        await Promise.all(this.listeners.map(async (listener) => await listener.onTestFinish(null)));
 
         return {
             name: this.test.name,
@@ -77,6 +81,14 @@ export class Run {
         } else {
             if (this.isExpectedSuiteContext) this.afterEach.add(action);
             else this.globalAfterEach.add(action);
+        }
+    }
+
+    addListener(listener: Listener) {
+        if (listener.onTestStart) {
+            this.listeners.push(listener);
+        } else if (listener.onTestFinish) {
+            this.listeners.push(listener);
         }
     }
 

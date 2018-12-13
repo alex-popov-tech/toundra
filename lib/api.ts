@@ -1,6 +1,7 @@
 // @ts-ignore
 import { isMainThread } from 'worker_threads';
 import { Action } from './beans/action';
+import { Listener } from './beans/listener';
 import { SyncAction } from './beans/syncAction';
 import { Runner as MasterRunner } from './master/runner';
 import { Runner as WorkerRunner } from './worker/runner';
@@ -44,6 +45,14 @@ export namespace Api {
     export function AfterEach(hook: () => void | Promise<void>) {
         if (!isMainThread) {
             WorkerRunner.instance.addHook('AfterEach', hook);
+        }
+    }
+    
+    export function AddListener(listener: Listener) {
+        if (isMainThread) {
+            MasterRunner.instance.addListener(listener);
+        } else {
+            WorkerRunner.instance.addListener(listener);
         }
     }
 
