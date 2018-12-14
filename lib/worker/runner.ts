@@ -1,10 +1,11 @@
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
-import { Listener } from '../beans/listener';
+import { AfterRunTestInfo } from '../listener/afterRunTestInfo';
+import { Listener } from '../listener/listener';
 import { SyncAction } from '../beans/syncAction';
-import { TestResult } from './beans/testResult';
 import { Run } from './run';
 import { RunnerOptions } from './runnerOptions';
+
 
 export class Runner {
     static instance: Runner;
@@ -21,7 +22,7 @@ export class Runner {
         this.testrun = new Run(options);
     }
 
-    async run(): Promise<TestResult> {
+    async run(): Promise<AfterRunTestInfo> {
         this.initTestsTree();
         return this.testrun.run();
     }

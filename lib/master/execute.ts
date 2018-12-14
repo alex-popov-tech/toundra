@@ -13,33 +13,11 @@ const argv = yargs
 
 
 const startTime = new Date().getTime();
-console.log('==================================')
+console.log('==================================');
 console.log(`RUNNER STARTED`);
-console.log('==================================')
-Runner.initialize({threads: argv.threads, specs: argv._}).run().then(suiteResults => {
-    // suiteResults.suites.forEach(suite => suite.tests.forEach(test => test.suiteResult = null));
-    console.log('==================================')
-    console.log(JSON.stringify(suiteResults, removeCircular, 3));
+console.log('==================================');
+Runner.initialize({threads: argv.threads, specs: argv._}).run().then(_ => {
+    console.log('==================================');
     console.log(`RUNNER FINISHED, time taken - ${new Date().getTime() - startTime}ms`);
-    console.log('==================================')
+    console.log('==================================');
 });
-
-const cache = [];
-const removeCircular = function(key, value) {
-    if (typeof value === 'object' && value !== null) {
-        if (cache.indexOf(value) !== -1) {
-            // Duplicate reference found
-            try {
-                // If this value does not reference a parent it can be deduped
-                return JSON.parse(JSON.stringify(value));
-            } catch (error) {
-                // discard key if value cannot be deduped
-                return;
-            }
-        }
-        // Store value in our collection
-        cache.push(value);
-    }
-    return value;
-};
-

@@ -1,13 +1,17 @@
 import { Api } from './api';
-import { OnStart } from './beans/results/onStart';
-import Suite = Api.Suite;
+import { OnFinishHandler } from './listener/handlers/onFinishHandler';
+import { OnStartHandler } from './listener/handlers/onStartHandler';
+import { OnSuiteFinishHandler } from './listener/handlers/onSuiteFinishHandler';
+import { OnSuiteStartHandler } from './listener/handlers/onSuiteStartHandler';
+import { OnTestFinishHandler } from './listener/handlers/onTestFinishHandler';
+import { OnTestStartHandler } from './listener/handlers/onTestStartHandler';
 import BeforeAll = Api.BeforeAll;
 import AfterAll = Api.AfterAll;
 import BeforeEach = Api.BeforeEach;
 import AfterEach = Api.AfterEach;
 import AddListener = Api.AddListener;
-
-const Test = Api.Test;
+import Suite = Api.Suite;
+import Test = Api.Test;
 
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
@@ -22,27 +26,32 @@ const sleepWithMessageAndError = async (message) => {
 };
 
 
-BeforeAll(() => { console.log('global before all'); });
+// BeforeAll(() => { console.log('global before all'); });
+// AfterAll(() => { console.log('global after all'); });
+// BeforeEach(() => { console.log('global before each'); });
+// AfterEach(() => { console.log('global after each'); });
 // BeforeAll(() => { console.log('global before all'); throw new Error('oops'); });
-AfterAll(() => { console.log('global after all'); });
 // AfterAll(() => { console.log('global after all'); throw new Error('oops'); });
-BeforeEach(() => { console.log('global before each'); });
 // BeforeEach(() => { console.log('global before each'); throw new Error('oops'); });
-AfterEach(() => { console.log('global after each'); });
 // AfterEach(() => { console.log('global after each'); throw new Error('oops'); });
 
 AddListener({
-    onStart: (result: OnStart) => console.log('on start', result),
-    onSuiteStart: (result) => console.log('on suite start', result),
-    onTestStart: (result) => console.log('on test start', result),
-    onTestFinish: (result) => console.log('on test finish', result),
-    onSuiteFinish: (result) => console.log('on suite finish', result),
-    onFinish: (result) => console.log('on finish', result)
+    // onStart: new OnStartHandler(result => console.log('on start', result)),
+    // onSuiteStart: new OnSuiteStartHandler(result => console.log('on suite start', result)),
+    // onTestStart: new OnTestStartHandler(result => console.log('on test start', result)),
+    // onTestFinish: new OnTestFinishHandler(result => console.log('on test finish', result)),
+    // onSuiteFinish: new OnSuiteFinishHandler(result => console.log('on suite finish', result)),
+    // onFinish: new OnFinishHandler(result => console.log('on finish', result))
 })
+
+// TODO test every listener with failed hook\test\suite
+// TODO add onSuiteStart onSuiteFinish logic to remove GLOBAL suite
+// TODO change AddListener function to be able to take object with optional hooks
+// TODO
 
 // just tests, no suites required :)
 Test('my test 1', () => sleepWithMessage('test1'));
-Test('my test 2', () => sleepWithMessage('test2'));
+// Test('my test 2', () => sleepWithMessage('test2'));
 // Test('my test 3', () => sleepWithMessage('test3'));
 // Test('my test 4', () => sleepWithMessage('test4'));
 // Test('my test 5', () => sleepWithMessage('test5'));
@@ -55,17 +64,17 @@ Test('my test 2', () => sleepWithMessage('test2'));
 // plain test suites supported too
 Suite('my first suite', () => {
 
-    BeforeAll(() => { console.log('before all'); });
+    // BeforeAll(() => { console.log('before all'); });
+    // AfterAll(() => { console.log('after all'); });
+    // BeforeEach(() => { console.log('before each'); });
+    // AfterEach(() => { console.log('after each'); });
     // BeforeAll(() => { console.log('before all'); throw new Error('oops'); });
-    AfterAll(() => { console.log('after all'); });
     // AfterAll(() => { console.log('after all'); throw new Error('oops'); });
-    BeforeEach(() => { console.log('before each'); });
     // BeforeEach(() => { console.log('before each'); throw new Error('oops'); });
-    AfterEach(() => { console.log('after each'); });
     // AfterEach(() => { console.log('after each'); throw new Error('oops'); });
 
     Test('my test 11', () => sleepWithMessage('test11'));
-    Test('my test 12', () => sleepWithMessage('test12'));
+    // Test('my test 12', () => sleepWithMessage('test12'));
     // Test('my test 13', () => sleepWithMessage('test13'));
     // Test('my test 14', () => sleepWithMessage('test14'));
     // Test('my test 15', () => sleepWithMessage('test15'));

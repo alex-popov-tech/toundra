@@ -1,4 +1,4 @@
-import { Action } from '../../beans/action';
+import { Action } from '../beans/action';
 
 
 export class Test {

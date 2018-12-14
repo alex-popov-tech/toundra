@@ -1,13 +1,14 @@
 import { Action } from '../beans/action';
-import { ActionError } from '../beans/actionError';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
-import { Listener } from '../beans/listener';
 import { SyncAction } from '../beans/syncAction';
 import { Configuration } from '../configuration';
-import { Test } from './beans/test';
-import { TestResult } from './beans/testResult';
+import { AfterRunTestInfo } from '../listener/afterRunTestInfo';
+import { Error } from '../listener/error';
+import { Listener } from '../listener/listener';
+import { RunStatus } from '../listener/runStatus';
 import { RunOptions } from './runOptions';
+import { Test } from './test';
 
 
 export class Run {
@@ -27,9 +28,9 @@ export class Run {
         this.isExpectedSuiteContext = options.suiteName === Configuration.DEFAULT_SUITE_NAME;
     }
 
-    async run(): Promise<TestResult> {
-        let testError: ActionError = null;
-        await Promise.all(this.listeners.map(async (listener) => await listener.onTestStart(null)));
+    async run() {
+        await await this.runOnTestStartListeners();
+
         try {
             await this.globalBeforeEach.run();
             await this.beforeEach.run();
@@ -37,18 +38,12 @@ export class Run {
             await this.afterEach.run();
             await this.globalAfterEach.run();
         } catch (error) {
-            testError = {
-                message: error.message,
-                stack: error.stack
-            };
+            await this.runOnTestFinishListeners('failed', new Error(error));
+            return new AfterRunTestInfo(this.options.testName, 'passed', new Error(error));
         }
-        await Promise.all(this.listeners.map(async (listener) => await listener.onTestFinish(null)));
 
-        return {
-            name: this.test.name,
-            status: testError ? 'failed' : 'passed',
-            error: testError
-        };
+        await this.runOnTestFinishListeners('passed', null);
+        return new AfterRunTestInfo(this.options.testName, 'passed', null);
     }
 
     addSuite(name: string, action: SyncAction) {
@@ -89,6 +84,35 @@ export class Run {
             this.listeners.push(listener);
         } else if (listener.onTestFinish) {
             this.listeners.push(listener);
+        }
+    }
+
+
+    private async runOnTestStartListeners() {
+        const onTestStartHandlers = this.listeners
+            .filter(listener => listener.onTestStart)
+            .map(listener => listener.onTestStart);
+
+        for (const onTestStartHandler of onTestStartHandlers) {
+            await onTestStartHandler.run({
+                suiteName: this.options.suiteName,
+                name: this.options.testName
+            });
+        }
+    }
+
+    private async runOnTestFinishListeners(status: RunStatus, error: Error) {
+        const onTestFinishHandlers = this.listeners
+            .filter(listener => listener.onTestFinish)
+            .map(listener => listener.onTestFinish);
+
+        for (const onTestFinishHandler of onTestFinishHandlers) {
+            await onTestFinishHandler.run({
+                suiteName: this.options.suiteName,
+                name: this.options.testName,
+                status: status,
+                error: error
+            });
         }
     }
 

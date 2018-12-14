@@ -1,7 +1,7 @@
 import { Configuration } from '../configuration';
-import { Suite } from './beans/suite';
-import { Test } from './beans/test';
-import { TestResult } from './beans/testResult';
+import { AfterRunTestInfo } from '../listener/afterRunTestInfo';
+import { Suite } from './suite';
+import { Test } from './test';
 import { WorkerUtils } from './workerUtils';
 
 
@@ -9,7 +9,7 @@ export class WorkerQueue {
     private readonly threads: number;
     private readonly suite: Suite;
     private readonly tests: Test[];
-    private readonly results: any[] = [];
+    private readonly results: AfterRunTestInfo[] = [];
 
     constructor(suite: Suite, tests: Test[], threads = 1) {
         this.suite = suite;
@@ -17,8 +17,8 @@ export class WorkerQueue {
         this.tests = tests;
     }
 
-    async run(): Promise<TestResult[]> {
-        const jsonResults = await new Promise<string[]>(resolve => {
+    async run(): Promise<AfterRunTestInfo[]> {
+        await new Promise<string[]>(resolve => {
             const tasksCount = this.tests.length;
             const queueLimit = (this.threads < tasksCount) ? this.threads : tasksCount;
 
@@ -28,9 +28,7 @@ export class WorkerQueue {
             }
         });
 
-        return jsonResults.map(jsonTestResult => JSON.parse(jsonTestResult))
-            .map(testResult => [testResult])
-            .reduce((arr1, arr2) => arr1.concat(arr2));
+        return this.results;
     }
 
     private startTest(testIndex: number, queueCallback) {
@@ -41,8 +39,9 @@ export class WorkerQueue {
             suiteName: this.suite.name,
             testName: testName
         }).then(
-            result => {
-                this.results.push(result);
+            (jsonResult: string) => {
+                // safe after test result
+                this.results.push(JSON.parse(jsonResult));
 
                 // if last - return all results
                 if (this.tests.length === this.results.length) {

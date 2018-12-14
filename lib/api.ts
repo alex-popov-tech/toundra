@@ -1,8 +1,8 @@
 // @ts-ignore
 import { isMainThread } from 'worker_threads';
 import { Action } from './beans/action';
-import { Listener } from './beans/listener';
 import { SyncAction } from './beans/syncAction';
+import { Listener } from './listener/listener';
 import { Runner as MasterRunner } from './master/runner';
 import { Runner as WorkerRunner } from './worker/runner';
 

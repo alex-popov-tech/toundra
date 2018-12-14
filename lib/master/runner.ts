@@ -1,9 +1,8 @@
 import * as path from 'path';
 import { Action } from '../beans/action';
 import { HookType } from '../beans/hookType';
-import { Listener } from '../beans/listener';
+import { Listener } from '../listener/listener';
 import { SyncAction } from '../beans/syncAction';
-import { SuitesResult } from './beans/suitesResult';
 import { RunnerOptions } from './runnerOptions';
 import { Run } from './run';
 
@@ -23,9 +22,9 @@ export class Runner {
         this.testrun = new Run(options.threads);
     }
 
-    async run(): Promise<SuitesResult> {
+    async run() {
         this.initTestsTree();
-        return this.testrun.run();
+        await this.testrun.run();
     }
 
     addSuite(name: string, action: SyncAction) {

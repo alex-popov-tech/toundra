@@ -1,63 +1,58 @@
 import { Action } from '../beans/action';
 import { Hooks } from '../beans/hooks';
 import { HookType } from '../beans/hookType';
-import { Listener } from '../beans/listener';
 import { Configuration } from '../configuration';
-import { Suite } from './beans/suite';
-import { SuitesResult } from './beans/suitesResult';
+import { AfterRunSuiteInfo } from '../listener/afterRunSuiteInfo';
+import { BeforeRunSuiteInfo } from '../listener/beforeRunSuiteInfo';
+import { BeforeRunTestInfo } from '../listener/beforeRunTestInfo';
+import { Error } from '../listener/error';
+import { Listener } from '../listener/listener';
+import { RunStatus } from '../listener/runStatus';
+import { Suite } from './suite';
 
 
 export class Run {
 
+    private readonly threads: number;
+    currentSpecFile: string;
+
     private readonly globalBeforeAll = new Hooks<'BeforeAll'>();
     private readonly globalAfterAll = new Hooks<'AfterAll'>();
     private readonly listeners: Listener[] = [];
-    private readonly result: SuitesResult = {error: null, suites: []};
-    private readonly threads: number;
+
     private readonly suites: Suite[] = [];
     private currentSuite: Suite;
-    currentSpecFile: string;
 
     constructor(threads: number) {
         this.threads = threads;
     }
 
-    async run(): Promise<SuitesResult> {
-        await Promise.all(this.listeners.map(async (listener) => await listener.onStart(null)));
-        try {
-            await this.globalBeforeAll.run();
-        } catch (error) {
-            this.result.error = {
-                message: error.message,
-                stack: error.stack
-            };
-            return this.result;
+    async run() {
+        await this.runOnStartListeners();
+
+        const beforeHooksError = await this.runGlobalBeforeAllHooks();
+        if (beforeHooksError) {
+            await this.runOnFinishListeners('failed', beforeHooksError, []);
+            return;
         }
 
+        const results: AfterRunSuiteInfo[] = [];
         for (const suite of this.suites) {
-            if (suite.name !== Configuration.DEFAULT_SUITE_NAME) {
-                await Promise.all(this.listeners.map(async (listener) => await listener.onSuiteStart(null)));
-            }
-            this.result.suites.push(await suite.run());
-            if (suite.name !== Configuration.DEFAULT_SUITE_NAME) {
-                await Promise.all(this.listeners.map(async (listener) => await listener.onSuiteFinish(null)));
-            }
+            const result = await suite.run();
+            results.push(result);
         }
 
-        try {
-            await this.globalAfterAll.run();
-        } catch (error) {
-            this.result.error = {
-                message: error.message,
-                stack: error.stack
-            };
+        const afterHooksError = await this.runGlobalAfterAllHooks();
+        if (afterHooksError) {
+            await this.runOnFinishListeners('failed', afterHooksError, results);
+            return;
         }
-        await Promise.all(this.listeners.map(async (listener) => await listener.onFinish(null)));
-        return this.result;
+
+        await this.runOnFinishListeners('passed', null, results);
     }
 
     addSuite(name: string, action: Action) {
-        const suite = new Suite(name, this.threads);
+        const suite = new Suite(name, this.threads, this.listeners);
         this.suites.push(suite);
         this.currentSuite = suite;
         action();
@@ -84,11 +79,61 @@ export class Run {
     }
 
     addListener(listener: Listener) {
-        if (listener.onSuiteStart) {
-            this.listeners.push(listener);
-        } else if (listener.onSuiteFinish) {
-            this.listeners.push(listener);
+        this.listeners.push(listener);
+    }
+
+    private async runOnStartListeners() {
+        const onStartHandlers = this.listeners
+            .filter(listener => listener.onStart)
+            .map(listener => listener.onStart);
+
+        const globalSuite = this.suites.find(suite => Configuration.DEFAULT_SUITE_NAME === suite.name);
+        const globalTestsInfo = globalSuite ? globalSuite.tests.map(test => new BeforeRunTestInfo(test.name)) : [];
+        const suitesInfo = this.suites.filter(suite => Configuration.DEFAULT_SUITE_NAME !== suite.name)
+            .map(suite => new BeforeRunSuiteInfo(suite.name, suite.tests.map(test => new BeforeRunTestInfo(test.name))));
+
+        for (const onStartHandler of onStartHandlers) {
+            await onStartHandler.run({
+                globalTests: globalTestsInfo,
+                suites: suitesInfo
+            });
         }
+    }
+
+    private async runOnFinishListeners(status: RunStatus, error: Error, suitesResuls: AfterRunSuiteInfo[]) {
+        const onFinishHandlers = this.listeners
+            .filter(listener => listener.onFinish)
+            .map(listener => listener.onFinish);
+
+        const globalSuiteInfo = suitesResuls.find(suite => Configuration.DEFAULT_SUITE_NAME === suite.name);
+        const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.testsInfo : [];
+
+        for (const onFinishHandler of onFinishHandlers) {
+            await onFinishHandler.run({
+                status: status,
+                error: error,
+                globalTests: globalTestsInfo,
+                suites: suitesResuls
+            });
+        }
+    }
+
+    private async runGlobalBeforeAllHooks(): Promise<Error> {
+        return this.globalBeforeAll.run().then(
+            _ => null,
+            error => {
+                return {name: error.name, stack: error.stack};
+            }
+        );
+    }
+
+    private async runGlobalAfterAllHooks(): Promise<Error> {
+        return this.globalAfterAll.run().then(
+            _ => null,
+            error => {
+                return {name: error.name, stack: error.stack};
+            }
+        );
     }
 
     private isLocalSuite(): boolean {
@@ -102,7 +147,7 @@ export class Run {
     private addGlobalTest(name: string, action: Action) {
         let suite = this.suites.find(suite => Configuration.DEFAULT_SUITE_NAME === suite.name);
         if (!suite) {
-            suite = new Suite(Configuration.DEFAULT_SUITE_NAME, this.threads);
+            suite = new Suite(Configuration.DEFAULT_SUITE_NAME, this.threads, this.listeners);
             this.suites.push(suite);
         }
         suite.addTest(name, action, this.currentSpecFile);
