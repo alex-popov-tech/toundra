@@ -25,7 +25,7 @@ export class Run {
 
     constructor(options: RunOptions) {
         this.options = options;
-        this.isExpectedSuiteContext = options.suiteName === Configuration.DEFAULT_SUITE_NAME;
+        this.isExpectedSuiteContext = options.suiteName === Configuration.GLOBAL_SUITE_NAME;
     }
 
     async run() {

@@ -1,6 +1,3 @@
-export class BeforeRunTestInfo {
+export type BeforeRunTestInfo = {
     readonly name;
-    constructor(name: string) {
-        this.name = name;
-    }
 }

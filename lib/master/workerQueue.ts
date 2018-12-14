@@ -1,18 +1,17 @@
 import { Configuration } from '../configuration';
 import { AfterRunTestInfo } from '../listener/afterRunTestInfo';
-import { Suite } from './suite';
-import { Test } from './test';
+import { RawTest } from './collector/rawTest';
 import { WorkerUtils } from './workerUtils';
 
 
 export class WorkerQueue {
     private readonly threads: number;
-    private readonly suite: Suite;
-    private readonly tests: Test[];
+    private readonly suiteName: string;
+    private readonly tests: RawTest[];
     private readonly results: AfterRunTestInfo[] = [];
 
-    constructor(suite: Suite, tests: Test[], threads = 1) {
-        this.suite = suite;
+    constructor(suiteName: string, tests: RawTest[], threads: number) {
+        this.suiteName = suiteName;
         this.threads = threads;
         this.tests = tests;
     }
@@ -36,7 +35,7 @@ export class WorkerQueue {
         const specPath = this.tests[testIndex].specFilePath;
         WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {
             specPath: specPath,
-            suiteName: this.suite.name,
+            suiteName: this.suiteName,
             testName: testName
         }).then(
             (jsonResult: string) => {

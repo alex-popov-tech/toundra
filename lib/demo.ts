@@ -36,7 +36,7 @@ const sleepWithMessageAndError = async (message) => {
 // AfterEach(() => { console.log('global after each'); throw new Error('oops'); });
 
 AddListener({
-    // onStart: new OnStartHandler(result => console.log('on start', result)),
+    onStart: result => console.log('on start', result),
     // onSuiteStart: new OnSuiteStartHandler(result => console.log('on suite start', result)),
     // onTestStart: new OnTestStartHandler(result => console.log('on test start', result)),
     // onTestFinish: new OnTestFinishHandler(result => console.log('on test finish', result)),
@@ -44,10 +44,11 @@ AddListener({
     // onFinish: new OnFinishHandler(result => console.log('on finish', result))
 })
 
-// TODO test every listener with failed hook\test\suite
-// TODO add onSuiteStart onSuiteFinish logic to remove GLOBAL suite
 // TODO change AddListener function to be able to take object with optional hooks
-// TODO
+// TODO separate tests collector from runner
+// TODO add onSuiteStart onSuiteFinish logic to remove GLOBAL suite
+// TODO test every listener with failed hook\test\suite
+// TODO test everything
 
 // just tests, no suites required :)
 Test('my test 1', () => sleepWithMessage('test1'));
