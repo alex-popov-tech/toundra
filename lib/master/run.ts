@@ -3,7 +3,6 @@ import { Error } from '../listener/error';
 import { RunStatus } from '../listener/runStatus';
 import { Util } from '../util';
 import { RunData } from './runData';
-import globalSuiteInfo = Util.globalSuiteInfo;
 import nonGlobalSuite = Util.nonGlobalSuite;
 import toBeforeRunSuiteInfo = Util.toBeforeRunSuiteInfo;
 import toBeforeRunTestInfo = Util.toBeforeRunTestInfo;
@@ -40,7 +39,7 @@ export class Run {
     }
 
     private async runOnStartListeners() {
-        const globalSuite = this.data.suites.find(globalSuite);
+        const globalSuite = this.data.suites.find(Util.globalSuite);
         const globalTestsInfo = globalSuite ? globalSuite.data.tests.map(toBeforeRunTestInfo) : [];
         const suitesInfo = this.data.suites.filter(nonGlobalSuite).map(toBeforeRunSuiteInfo);
 
@@ -53,7 +52,7 @@ export class Run {
     }
 
     private async runOnFinishListeners(status: RunStatus, error: Error, suitesResuls: AfterRunSuiteInfo[]) {
-        const globalSuiteInfo = suitesResuls.find(globalSuiteInfo);
+        const globalSuiteInfo = suitesResuls.find(Util.globalSuiteInfo);
         const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.testsInfo : [];
 
         for (const onFinishHandler of this.data.onFinishListener) {

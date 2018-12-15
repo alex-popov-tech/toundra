@@ -19,7 +19,7 @@ export namespace Api {
 
     export function Test(name: string, action: Action) {
         if (isMainThread) {
-            MasterCollector.instance.addTest(name, action);
+            MasterCollector.instance.addTest(name);
         } else {
             WorkerCollector.instance.addTest(name, action);
         }

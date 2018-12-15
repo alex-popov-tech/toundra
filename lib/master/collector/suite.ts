@@ -63,7 +63,7 @@ export class Suite {
         for (const onSuiteStartHandler of this.data.onSuiteStartHandlers) {
             await onSuiteStartHandler({
                 name: this.data.name,
-                testsInfo: this.data.tests.map(toBeforeRunTestInfo)
+                tests: this.data.tests.map(toBeforeRunTestInfo)
             });
         }
     }

@@ -32,6 +32,7 @@ export class Collector {
     }
 
     getData(): RunData {
+        this.initTestsTree();
         return {
             suites: this.rawSuites.map(rawSuite => new Suite({
                 name: rawSuite.name,
@@ -50,7 +51,6 @@ export class Collector {
 
     private constructor(specsMasks: string[]) {
         this.specPaths = this.parseSpecsMask(specsMasks);
-        this.initTestsTree();
     }
 
     private initTestsTree() {
@@ -111,6 +111,10 @@ export class Collector {
     }
 
     private addGlobalTest(name: string) {
+        const globalSuiteAdded = this.rawSuites.map(rawsuite => rawsuite.name).includes(this.globalSuite.name);
+        if (!globalSuiteAdded) {
+            this.rawSuites.push(this.globalSuite);
+        }
         this.globalSuite.tests.push(new RawTest(name, this.currentSpecFile));
     }
 }

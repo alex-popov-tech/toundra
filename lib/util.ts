@@ -15,12 +15,16 @@ export namespace Util {
     export function toBeforeRunSuiteInfo(suite: Suite): BeforeRunSuiteInfo {
         return {
             name: suite.data.name,
-            testsInfo: suite.data.tests.map(toBeforeRunTestInfo)
+            tests: suite.data.tests.map(toBeforeRunTestInfo)
         };
     }
 
-    export function globalSuiteInfo(suite: AfterRunSuiteInfo): boolean {
-        return suite.name === Configuration.GLOBAL_SUITE_NAME;
+    export function globalSuiteInfo(suiteResult: AfterRunSuiteInfo): boolean {
+        return suiteResult.name === Configuration.GLOBAL_SUITE_NAME;
+    }
+
+    export function globalSuite(suite: Suite): boolean {
+        return suite.data.name === Configuration.GLOBAL_SUITE_NAME;
     }
 
     export function nonGlobalSuite(suite: Suite): boolean {

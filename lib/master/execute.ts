@@ -12,14 +12,16 @@ const argv = yargs
     .epilog('copyright 2019')
     .argv;
 
+
 const collector = Collector.initialize(argv._);
-const runner = new Run(collector.getData(), argv.threads);
+const data = collector.getData()
+const testsRun = new Run(data, argv.threads);
 
 const startTime = new Date().getTime();
 console.log('==================================');
 console.log(`RUNNER STARTED`);
 console.log('==================================');
-runner.run().then(_ => {
+testsRun.run().then(_ => {
     console.log('==================================');
     console.log(`RUNNER FINISHED, time taken - ${new Date().getTime() - startTime}ms`);
     console.log('==================================');
