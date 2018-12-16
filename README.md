@@ -1,107 +1,97 @@
 # Samael
 
-Test runner for Javascript with parallelization support.
+Parallel test runner for NodeJS.
+
+### Prerequisites
+[Nodejs 11.4.0+](https://nodejs.org/en/)
 
 ## Core features
-* Easy concurrency for running tests in parallel - you need to specify how many threads you want to use and you are
-ready to go
-* BeforeAll, AfterAll, BeforeEach, AfterEach hooks
+* Easy running tests in parallel built on top of NodeJS [Worker](https://nodejs.org/api/worker_threads.html) - you need to specify how many threads you want to use and you are ready to go
+* `BeforeAll`, `AfterAll`, `BeforeEach`, `AfterEach` hooks
 * Suite tests, Plain tests (you can write tests both with suites and without them)
-* (TBD) jasmine-like test listeners (async listeners supported)
+* Listeners - add reporters to your tests
+
+## Installation
+
+Install `Samael` via npm to your project:
+
+```
+npm i --save-dev samael
+```
+
+Add `test` script to your package.json:
+
+```
+"test": "node --experimental-worker node_modules/.bin/samael --threads 1 specs/*spec.js"
+```
+
+Change `1` to any number of threads you want to use and start writing tests!
 
 ## Examples
 
 Imagine that you have spec file, which contains 20 tests, and each of them takes 1 second to run. Here is the demo:
+
 ```
-// demo.js
+// specs/myspec.js
 
-// imports...
+const {Test, Suite} = require('samael');
 
-const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
-const sleepWithMessage = async (message) => {
-    console.log('start', message);
-    await sleep();
-    console.log('finish', message);
-};
-
+// stub of async test which takes 1 second to run
+const sleepOneSec = () => new Promise(resolve => setTimeout(resolve, 1000));
 
 // just tests, no suites required :)
 Test('my test 1', () => sleepWithMessage('test1'));
 Test('my test 2', () => sleepWithMessage('test2'));
-Test('my test 3', () => sleepWithMessage('test3'));
-Test('my test 4', () => sleepWithMessage('test4'));
-Test('my test 5', () => sleepWithMessage('test5'));
-Test('my test 6', () => sleepWithMessage('test6'));
-Test('my test 7', () => sleepWithMessage('test7'));
-Test('my test 8', () => sleepWithMessage('test8'));
-Test('my test 9', () => sleepWithMessage('test9'));
+...
 Test('my test 10', () => sleepWithMessage('test10'));
 
 // plain test suites supported too
 Suite('my first suite', () => {
     Test('my test 11', () => sleepWithMessage('test11'));
     Test('my test 12', () => sleepWithMessage('test12'));
-    Test('my test 13', () => sleepWithMessage('test13'));
-    Test('my test 14', () => sleepWithMessage('test14'));
-    Test('my test 15', () => sleepWithMessage('test15'));
-    Test('my test 16', () => sleepWithMessage('test16'));
-    Test('my test 17', () => sleepWithMessage('test17'));
-    Test('my test 18', () => sleepWithMessage('test18'));
-    Test('my test 19', () => sleepWithMessage('test19'));
+    ...
     Test('my test 20', () => sleepWithMessage('test20'));
 });
 ```
 
 Running them sequentially will take ~ 20 second.
-```
-npm run build && node ./built/bin/crunner.js ./built/demo.js
 
-==================================
-RUNNER STARTED
-==================================
-... logs for you to be sure that tests are working
-==================================
-RUNNER FINISHED, time taken - 21575ms
-==================================
+`node --experimental-worker node_modules/.bin/samael --threads 1 specs/myspec.js`
+```
+Tests Started in 1 thread(s)
+....................
+Tests Finished in 21575ms
+Overall tests - 20. Passed - 20. Failed - 0
 ```
 
 Okay, lets try to apply parallelism to decrease run time:
-```
-npm run build && node ./built/bin/crunner.js --threads 2 ./built/demo.js
 
-==================================
-RUNNER STARTED
-==================================
-... logs for you to be sure that tests are working
-==================================
-RUNNER FINISHED, time taken - 10912ms
-==================================
+`node --experimental-worker node_modules/.bin/samael --threads 2 specs/myspec.js`
+```
+Tests Started in 2 thread(s)
+....................
+Tests Finished in 10912ms
+Overall tests - 20. Passed - 20. Failed - 0
 ```
 
 Not bad, but what about decrease tests run time to 4 second?
-```
-npm run build && node ./built/bin/crunner.js --threads 5 ./built/demo.js
 
-==================================
-RUNNER STARTED
-==================================
-... logs for you to be sure that tests are working
-==================================
-RUNNER FINISHED, time taken - 4561ms
-==================================
+`node --experimental-worker node_modules/.bin/samael --threads 5 specs/myspec.js`
+```
+Tests Started in 5 thread(s)
+....................
+Tests Finished in 4561ms
+Overall tests - 20. Passed - 20. Failed - 0
 ```
 
 Going crazy:
-```
-npm run build && node ./built/bin/crunner.js --threads 10 ./built/demo.js
 
-==================================
-RUNNER STARTED
-==================================
-... logs for you to be sure that tests are working
-==================================
-RUNNER FINISHED, time taken - 2553ms
-==================================
+`node --experimental-worker node_modules/.bin/samael --threads 10 specs/myspec.js`
+```
+Tests Started in 10 thread(s)
+....................
+Tests Finished in 2553ms
+Overall tests - 20. Passed - 20. Failed - 0
 ```
 
 Yeap, this is a demo of test runner for NodeJS, which can do parallel testing THAT EASY.

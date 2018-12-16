@@ -1,6 +1,6 @@
 {
   "name": "samael",
-  "version": "0.0.1",
+  "description": "Parallel test runner for NodeJS.",
   "main": "built/index.js",
   "typings": "built/index.d.ts",
   "dependencies": {
@@ -16,5 +16,36 @@
     "compile": "tsc --project lib",
     "build": "npm run clean && npm run compile"
   },
-  "bin": "built/bin/samael.js"
+  "bin": "built/bin/samael.js",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AleksanderPopov/samael.git"
+  },
+  "author": "Alexander Popov <aleksander.popov.93@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/AleksanderPopov/samael/"
+  },
+  "engines": {
+    "node": ">= 11.4.0"
+  },
+  "keywords": [
+    "samael",
+    "parallel",
+    "test",
+    "worker",
+    "tdd",
+    "runner",
+    "testing",
+    "fast",
+    "jest",
+    "mocha",
+    "jasmine",
+    "promise",
+    "promises",
+    "async",
+    "function",
+    "await",
+    "typescript"
+  ]
 }
