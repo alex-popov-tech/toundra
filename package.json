@@ -15,7 +15,5 @@
     "compile": "tsc --project lib",
     "build": "npm run clean && npm run compile"
   },
-  "bin": {
-    "samael": "built/bin/samael.js"
-  }
+  "bin": "built/bin/samael.js"
 }
