@@ -45,6 +45,7 @@ export class Run {
 
         for (const onStartHandler of this.data.onStartListener) {
             await onStartHandler({
+                threads: this.threads,
                 globalTests: globalTestsInfo,
                 suites: suitesInfo
             });
@@ -53,14 +54,15 @@ export class Run {
 
     private async runOnFinishListeners(status: RunStatus, error: Error, suitesResuls: AfterRunSuiteInfo[]) {
         const globalSuiteInfo = suitesResuls.find(Util.globalSuiteInfo);
-        const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.testsInfo : [];
+        const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.tests : [];
+        const usualSuites = suitesResuls.filter(Util.nonGlobalSuiteInfo);
 
         for (const onFinishHandler of this.data.onFinishListener) {
             await onFinishHandler({
                 status: status,
                 error: error,
                 globalTests: globalTestsInfo,
-                suites: suitesResuls
+                suites: usualSuites
             });
         }
     }

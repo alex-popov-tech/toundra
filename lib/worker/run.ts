@@ -19,7 +19,7 @@ export class Run {
     }
 
     async run() {
-        await await this.runOnTestStartListeners();
+        await this.runOnTestStartListeners();
 
         const result = await this.runTest();
 

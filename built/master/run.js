@@ -30,6 +30,7 @@ class Run {
         const suitesInfo = this.data.suites.filter(nonGlobalSuite).map(toBeforeRunSuiteInfo);
         for (const onStartHandler of this.data.onStartListener) {
             await onStartHandler({
+                threads: this.threads,
                 globalTests: globalTestsInfo,
                 suites: suitesInfo
             });
@@ -37,13 +38,14 @@ class Run {
     }
     async runOnFinishListeners(status, error, suitesResuls) {
         const globalSuiteInfo = suitesResuls.find(util_1.Util.globalSuiteInfo);
-        const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.testsInfo : [];
+        const globalTestsInfo = globalSuiteInfo ? globalSuiteInfo.tests : [];
+        const usualSuites = suitesResuls.filter(util_1.Util.nonGlobalSuiteInfo);
         for (const onFinishHandler of this.data.onFinishListener) {
             await onFinishHandler({
                 status: status,
                 error: error,
                 globalTests: globalTestsInfo,
-                suites: suitesResuls
+                suites: usualSuites
             });
         }
     }

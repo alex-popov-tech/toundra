@@ -20,12 +20,16 @@ var Util;
         return suiteResult.name === configuration_1.Configuration.GLOBAL_SUITE_NAME;
     }
     Util.globalSuiteInfo = globalSuiteInfo;
+    function nonGlobalSuiteInfo(suiteResult) {
+        return !globalSuiteInfo(suiteResult);
+    }
+    Util.nonGlobalSuiteInfo = nonGlobalSuiteInfo;
     function globalSuite(suite) {
         return suite.data.name === configuration_1.Configuration.GLOBAL_SUITE_NAME;
     }
     Util.globalSuite = globalSuite;
     function nonGlobalSuite(suite) {
-        return suite.data.name !== configuration_1.Configuration.GLOBAL_SUITE_NAME;
+        return !globalSuite(suite);
     }
     Util.nonGlobalSuite = nonGlobalSuite;
 })(Util = exports.Util || (exports.Util = {}));

@@ -1,4 +1,5 @@
 import * as yargs from 'yargs';
+import { Configuration } from '../configuration';
 import { Collector } from './collector/collector';
 import { Run } from './run';
 
@@ -14,15 +15,9 @@ const argv = yargs
 
 
 const collector = Collector.initialize(argv._);
-const data = collector.getData()
+collector.addListener(Configuration.DEFAULT_LISTENER);
+const data = collector.getData();
 const testsRun = new Run(data, argv.threads);
 
-const startTime = new Date().getTime();
-console.log('==================================');
-console.log(`RUNNER STARTED`);
-console.log('==================================');
 testsRun.run().then(_ => {
-    console.log('==================================');
-    console.log(`RUNNER FINISHED, time taken - ${new Date().getTime() - startTime}ms`);
-    console.log('==================================');
 });

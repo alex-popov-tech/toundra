@@ -9,7 +9,7 @@ class Run {
         this.data = data;
     }
     async run() {
-        await await this.runOnTestStartListeners();
+        await this.runOnTestStartListeners();
         const result = await this.runTest();
         await this.runOnTestFinishListeners(result.status, result.error);
         return result;

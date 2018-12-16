@@ -6,6 +6,6 @@ import { SuiteStatus } from './suiteStatus';
 export type AfterRunSuiteInfo = {
     readonly name: string;
     readonly error: Error;
-    readonly testsInfo: AfterRunTestInfo[];
+    readonly tests: AfterRunTestInfo[];
     status: SuiteStatus;
 }

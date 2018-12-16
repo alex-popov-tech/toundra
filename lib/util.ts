@@ -23,11 +23,15 @@ export namespace Util {
         return suiteResult.name === Configuration.GLOBAL_SUITE_NAME;
     }
 
+    export function nonGlobalSuiteInfo(suiteResult: AfterRunSuiteInfo): boolean {
+        return !globalSuiteInfo(suiteResult);
+    }
+
     export function globalSuite(suite: Suite): boolean {
         return suite.data.name === Configuration.GLOBAL_SUITE_NAME;
     }
 
     export function nonGlobalSuite(suite: Suite): boolean {
-        return suite.data.name !== Configuration.GLOBAL_SUITE_NAME;
+        return !globalSuite(suite);
     }
 }

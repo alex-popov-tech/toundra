@@ -1,6 +1,7 @@
 export declare namespace Configuration {
-    const BIN_PATH = "./node_modules/samael/built/bin/samael.js";
-    const MASTER_EXECUTOR_PATH = "../master/execute.js";
-    const WORKER_EXECUTOR_PATH = "../worker/execute.js";
+    const BIN_PATH: any;
+    const MASTER_EXECUTOR_PATH: any;
+    const WORKER_EXECUTOR_PATH: any;
     const GLOBAL_SUITE_NAME = "GLOBAL";
+    const DEFAULT_LISTENER: import("./listener/listener").Listener;
 }

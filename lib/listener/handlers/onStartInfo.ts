@@ -3,5 +3,6 @@ import { BeforeRunTestInfo } from '../beforeRunTestInfo';
 
 export type OnStartInfo = {
     globalTests: BeforeRunTestInfo[],
-    suites: BeforeRunSuiteInfo[]
+    suites: BeforeRunSuiteInfo[],
+    threads: number
 }

@@ -1,3 +1,4 @@
+import { Configuration } from '../../configuration';
 import { AfterRunSuiteInfo } from '../../listener/afterRunSuiteInfo';
 import { AfterRunTestInfo } from '../../listener/afterRunTestInfo';
 import { Error } from '../../listener/error';
@@ -11,9 +12,11 @@ import toBeforeRunTestInfo = Util.toBeforeRunTestInfo;
 export class Suite {
 
     readonly data: SuiteData;
+    private readonly isGlobal: boolean;
 
     constructor(suiteData: SuiteData) {
         this.data = suiteData;
+        this.isGlobal = suiteData.name === Configuration.GLOBAL_SUITE_NAME;
     }
 
     async run(threads: number): Promise<AfterRunSuiteInfo> {
@@ -60,22 +63,26 @@ export class Suite {
     }
 
     private async runOnSuiteStartListeners() {
-        for (const onSuiteStartHandler of this.data.onSuiteStartHandlers) {
-            await onSuiteStartHandler({
-                name: this.data.name,
-                tests: this.data.tests.map(toBeforeRunTestInfo)
-            });
+        if (!this.isGlobal) {
+            for (const onSuiteStartHandler of this.data.onSuiteStartHandlers) {
+                await onSuiteStartHandler({
+                    name: this.data.name,
+                    tests: this.data.tests.map(toBeforeRunTestInfo)
+                });
+            }
         }
     }
 
     private async runOnSuiteFinishListeners(status: SuiteStatus, error: Error, testResults: AfterRunTestInfo[]) {
-        for (const onSuiteFinishHandler of this.data.onSuiteFinishHandlers) {
-            await onSuiteFinishHandler({
-                name: this.data.name,
-                status: status,
-                error: error,
-                testsInfo: testResults
-            });
+        if (!this.isGlobal) {
+            for (const onSuiteFinishHandler of this.data.onSuiteFinishHandlers) {
+                await onSuiteFinishHandler({
+                    name: this.data.name,
+                    status: status,
+                    error: error,
+                    tests: testResults
+                });
+            }
         }
     }
 
@@ -83,7 +90,7 @@ export class Suite {
         return {
             name: this.data.name,
             status: status,
-            testsInfo: testResults,
+            tests: testResults,
             error: error
         };
     }

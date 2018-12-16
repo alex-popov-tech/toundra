@@ -4,11 +4,12 @@
   "main": "built/index.js",
   "typings": "built/index.d.ts",
   "dependencies": {
+    "yargs": "12.0.5"
+  },
+  "devDependencies": {
     "@types/yargs": "12.0.1",
     "@types/node": "10.12.15",
-    "typescript": "3.2.2",
-    "yargs": "12.0.5",
-    "jasmine": "3.3.1"
+    "typescript": "3.2.2"
   },
   "scripts": {
     "clean": "rm -rf built",

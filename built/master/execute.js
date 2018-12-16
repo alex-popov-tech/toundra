@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const yargs = require("yargs");
+const configuration_1 = require("../configuration");
 const collector_1 = require("./collector/collector");
 const run_1 = require("./run");
 const argv = yargs
@@ -12,15 +13,9 @@ const argv = yargs
     .epilog('copyright 2019')
     .argv;
 const collector = collector_1.Collector.initialize(argv._);
+collector.addListener(configuration_1.Configuration.DEFAULT_LISTENER);
 const data = collector.getData();
 const testsRun = new run_1.Run(data, argv.threads);
-const startTime = new Date().getTime();
-console.log('==================================');
-console.log(`RUNNER STARTED`);
-console.log('==================================');
 testsRun.run().then(_ => {
-    console.log('==================================');
-    console.log(`RUNNER FINISHED, time taken - ${new Date().getTime() - startTime}ms`);
-    console.log('==================================');
 });
 //# sourceMappingURL=execute.js.map
