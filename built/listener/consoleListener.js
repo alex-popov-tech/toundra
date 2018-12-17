@@ -15,7 +15,9 @@ exports.CONSOLE_LISTENER = {
         const errorMessage = 'Errors:\n' + failedTests.map((test, index) => `\t${index}) ${test.name}\n\t\tError message: ${test.error.name}\n\t\tError stacktrace: ${test.error.stack.replace('\n', '\n')}`).join('\n\n');
         process.stdout.write(`\nTests Finished in ${new Date().getTime() - start}ms`);
         process.stdout.write(`\nOverall tests - ${testsCount}. Passed - ${passedTests.length}. Failed - ${failedTests.length}\n`);
-        process.stdout.write(`\n${errorMessage}\n`);
+        if (failedTests.length > 0) {
+            process.stdout.write(`\n${errorMessage}\n`);
+        }
     }
 };
 //# sourceMappingURL=consoleListener.js.map
