@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const configuration_1 = require("../configuration");
-const workerUtils_1 = require("./workerUtils");
+const { Worker } = require('worker_threads');
 class WorkerQueue {
     constructor(suiteName, tests, threads) {
         this.results = [];
@@ -23,11 +23,11 @@ class WorkerQueue {
     startTest(testIndex, queueCallback) {
         const testName = this.tests[testIndex].name;
         const specPath = this.tests[testIndex].specFilePath;
-        workerUtils_1.WorkerUtils.asyncStartWorker(configuration_1.Configuration.BIN_PATH, {
+        this.startWorker(configuration_1.Configuration.BIN_PATH, {
             specPath: specPath,
             suiteName: this.suiteName,
             testName: testName
-        }).then((jsonResult) => {
+        }, (jsonResult) => {
             // safe after test result
             this.results.push(JSON.parse(jsonResult));
             // if last - return all results
@@ -39,6 +39,14 @@ class WorkerQueue {
                 this.startTest(testIndex + this.threads, queueCallback);
             }
         });
+    }
+    startWorker(jsFilePath, workerData, callback) {
+        const worker = new Worker(jsFilePath, { workerData: workerData });
+        let wresult = null;
+        worker.on('message', message => {
+            wresult = message;
+        });
+        worker.on('exit', _ => callback(wresult));
     }
 }
 exports.WorkerQueue = WorkerQueue;

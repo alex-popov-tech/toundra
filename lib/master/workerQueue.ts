@@ -1,7 +1,7 @@
 import { Configuration } from '../configuration';
 import { AfterRunTestInfo } from '../listener/afterRunTestInfo';
 import { RawTest } from './collector/rawTest';
-import { WorkerUtils } from './workerUtils';
+const {Worker} = require('worker_threads');
 
 
 export class WorkerQueue {
@@ -33,25 +33,32 @@ export class WorkerQueue {
     private startTest(testIndex: number, queueCallback) {
         const testName = this.tests[testIndex].name;
         const specPath = this.tests[testIndex].specFilePath;
-        WorkerUtils.asyncStartWorker(Configuration.BIN_PATH, {
+        this.startWorker(Configuration.BIN_PATH, {
             specPath: specPath,
             suiteName: this.suiteName,
             testName: testName
-        }).then(
-            (jsonResult: string) => {
-                // safe after test result
-                this.results.push(JSON.parse(jsonResult));
+        }, (jsonResult) => {
+            // safe after test result
+            this.results.push(JSON.parse(jsonResult));
 
-                // if last - return all results
-                if (this.tests.length === this.results.length) {
-                    queueCallback(this.results);
-                }
-
-                // start new task after current if needed
-                if (testIndex + this.threads < this.tests.length) {
-                    this.startTest(testIndex + this.threads, queueCallback);
-                }
+            // if last - return all results
+            if (this.tests.length === this.results.length) {
+                queueCallback(this.results);
             }
-        );
+
+            // start new task after current if needed
+            if (testIndex + this.threads < this.tests.length) {
+                this.startTest(testIndex + this.threads, queueCallback);
+            }
+        });
+    }
+
+    private startWorker(jsFilePath: string, workerData: any, callback: (result: any) => any) {
+        const worker = new Worker(jsFilePath, {workerData: workerData});
+        let wresult = null;
+        worker.on('message', message => {
+            wresult = message;
+        });
+        worker.on('exit', _ => callback(wresult));
     }
 }

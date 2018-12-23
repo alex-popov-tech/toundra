@@ -25,5 +25,6 @@ var WorkerUtils;
         });
         worker.on('exit', _ => callback(werror, wresult));
     }
+    WorkerUtils.startWorker = startWorker;
 })(WorkerUtils = exports.WorkerUtils || (exports.WorkerUtils = {}));
 //# sourceMappingURL=workerUtils.js.map
