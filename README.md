@@ -1,4 +1,4 @@
-# Samael
+# Toundra
 
 Parallel test runner for NodeJS.
 
@@ -13,16 +13,16 @@ Parallel test runner for NodeJS.
 
 ## Installation
 
-Install `Samael` via npm to your project:
+Install `Toundra` via npm to your project:
 
 ```
-npm i --save-dev samael
+npm i --save-dev toundra
 ```
 
 Add `test` script to your package.json:
 
 ```
-"test": "node --experimental-worker node_modules/.bin/samael --threads 1 specs/*spec.js"
+"test": "node --experimental-worker node_modules/.bin/toundra --threads 1 specs/*spec.js"
 ```
 
 Change `1` to any number of threads you want to use and start writing tests!
@@ -34,7 +34,7 @@ Imagine that you have spec file, which contains 20 tests, and each of them takes
 ```
 // specs/myspec.js
 
-const {Test, Suite} = require('samael');
+const {Test, Suite} = require('toundra');
 
 // stub of async test which takes 1 second to run
 const sleepOneSec = () => new Promise(resolve => setTimeout(resolve, 1000));
@@ -56,7 +56,7 @@ Suite('my first suite', () => {
 
 Running them sequentially will take ~ 20 second.
 
-`node --experimental-worker node_modules/.bin/samael --threads 1 specs/myspec.js`
+`node --experimental-worker node_modules/.bin/toundra --threads 1 specs/myspec.js`
 ```
 Tests Started in 1 thread(s)
 ....................
@@ -66,7 +66,7 @@ Overall tests - 20. Passed - 20. Failed - 0
 
 Okay, lets try to apply parallelism to decrease run time:
 
-`node --experimental-worker node_modules/.bin/samael --threads 2 specs/myspec.js`
+`node --experimental-worker node_modules/.bin/toundra --threads 2 specs/myspec.js`
 ```
 Tests Started in 2 thread(s)
 ....................
@@ -76,7 +76,7 @@ Overall tests - 20. Passed - 20. Failed - 0
 
 Not bad, but what about decrease tests run time to 4 second?
 
-`node --experimental-worker node_modules/.bin/samael --threads 5 specs/myspec.js`
+`node --experimental-worker node_modules/.bin/toundra --threads 5 specs/myspec.js`
 ```
 Tests Started in 5 thread(s)
 ....................
@@ -86,7 +86,7 @@ Overall tests - 20. Passed - 20. Failed - 0
 
 Going crazy:
 
-`node --experimental-worker node_modules/.bin/samael --threads 10 specs/myspec.js`
+`node --experimental-worker node_modules/.bin/toundra --threads 10 specs/myspec.js`
 ```
 Tests Started in 10 thread(s)
 ....................
