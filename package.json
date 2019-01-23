@@ -1,5 +1,5 @@
 {
-  "name": "samael",
+  "name": "toundra",
   "description": "Parallel test runner for NodeJS.",
   "main": "built/index.js",
   "typings": "built/index.d.ts",
@@ -16,21 +16,21 @@
     "compile": "tsc --project lib",
     "build": "npm run clean && npm run compile"
   },
-  "bin": "built/bin/samael.js",
-  "version": "1.0.0",
+  "bin": "built/bin/toundra.js",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AleksanderPopov/samael.git"
+    "url": "https://github.com/AleksanderPopov/toundra.git"
   },
   "author": "Alexander Popov <aleksander.popov.93@gmail.com>",
   "bugs": {
-    "url": "https://github.com/AleksanderPopov/samael/"
+    "url": "https://github.com/AleksanderPopov/toundra/"
   },
   "engines": {
     "node": ">= 11.4.0"
   },
   "keywords": [
-    "samael",
+    "toundra",
     "parallel",
     "test",
     "worker",

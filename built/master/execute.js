@@ -6,8 +6,8 @@ const collector_1 = require("./collector/collector");
 const run_1 = require("./run");
 const argv = yargs
     .usage('Usage: $0 <command> [options] <path_to_spec_files>')
-    .command('samael', 'Run tests')
-    .example('$0 samael --threads 20 spec.js', 'run tests concurrently in 20 threads')
+    .command('toundra', 'Run tests')
+    .example('$0 toundra --threads 20 spec.js', 'run tests concurrently in 20 threads')
     .alias('t', 'threads').describe('t', 'Threads count').default('t', 1)
     .help('h').alias('h', 'help')
     .epilog('copyright 2019')

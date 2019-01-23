@@ -6,9 +6,9 @@ var Configuration;
     const path = require('path');
     const fs = require('fs');
     // paths magic
-    Configuration.BIN_PATH = fs.existsSync(path.resolve('./built/bin/samael.js'))
-        ? path.resolve('./built/bin/samael.js')
-        : './node_modules/samael/built/bin/samael.js';
+    Configuration.BIN_PATH = fs.existsSync(path.resolve('./built/bin/toundra.js'))
+        ? path.resolve('./built/bin/toundra.js')
+        : './node_modules/toundra/built/bin/toundra.js';
     Configuration.MASTER_EXECUTOR_PATH = fs.existsSync(path.resolve('./built/master/execute.js'))
         ? path.resolve('./built/master/execute.js')
         : '../master/execute.js';

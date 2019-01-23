@@ -6,9 +6,9 @@ export namespace Configuration {
     const fs = require('fs');
 
     // paths magic
-    export const BIN_PATH = fs.existsSync(path.resolve('./built/bin/samael.js'))
-        ? path.resolve('./built/bin/samael.js')
-        : './node_modules/samael/built/bin/samael.js';
+    export const BIN_PATH = fs.existsSync(path.resolve('./built/bin/toundra.js'))
+        ? path.resolve('./built/bin/toundra.js')
+        : './node_modules/toundra/built/bin/toundra.js';
 
     export const MASTER_EXECUTOR_PATH = fs.existsSync(path.resolve('./built/master/execute.js'))
         ? path.resolve('./built/master/execute.js')

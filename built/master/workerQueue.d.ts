@@ -8,5 +8,5 @@ export declare class WorkerQueue {
     constructor(suiteName: string, tests: RawTest[], threads: number);
     run(): Promise<AfterRunTestInfo[]>;
     private startTest;
-    startWorker(jsFilePath: string, workerData: any, callback: (result: any) => any): void;
+    private startWorker;
 }
