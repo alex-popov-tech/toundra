@@ -17,7 +17,7 @@
     "build": "npm run clean && npm run compile"
   },
   "bin": "built/bin/toundra.js",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/AleksanderPopov/toundra.git"
