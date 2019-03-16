@@ -3,7 +3,7 @@
 Parallel test runner for NodeJS.
 
 ### Prerequisites
-[Nodejs 11.4.0+](https://nodejs.org/en/)
+[Nodejs 11.7.0+](https://nodejs.org/en/)
 
 ## Core features
 * Easy running tests in parallel built on top of NodeJS [Worker](https://nodejs.org/api/worker_threads.html) - you need to specify how many threads you want to use and you are ready to go
@@ -22,7 +22,7 @@ npm i --save-dev toundra
 Add `test` script to your package.json:
 
 ```
-"test": "node --experimental-worker node_modules/.bin/toundra --threads 1 specs/*spec.js"
+"test": toundra --threads 1 specs/*spec.js"
 ```
 
 Change `1` to any number of threads you want to use and start writing tests!
@@ -56,7 +56,7 @@ Suite('my first suite', () => {
 
 Running them sequentially will take ~ 20 second.
 
-`node --experimental-worker node_modules/.bin/toundra --threads 1 specs/myspec.js`
+`toundra --threads 1 specs/myspec.js`
 ```
 Tests Started in 1 thread(s)
 ....................
@@ -76,7 +76,7 @@ Overall tests - 20. Passed - 20. Failed - 0
 
 Not bad, but what about decrease tests run time to 4 second?
 
-`node --experimental-worker node_modules/.bin/toundra --threads 5 specs/myspec.js`
+`toundra --threads 5 specs/myspec.js`
 ```
 Tests Started in 5 thread(s)
 ....................
@@ -86,7 +86,7 @@ Overall tests - 20. Passed - 20. Failed - 0
 
 Going crazy:
 
-`node --experimental-worker node_modules/.bin/toundra --threads 10 specs/myspec.js`
+`toundra --threads 10 specs/myspec.js`
 ```
 Tests Started in 10 thread(s)
 ....................

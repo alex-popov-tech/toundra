@@ -1,6 +1,7 @@
 {
   "name": "toundra",
   "description": "Parallel test runner for NodeJS.",
+  "license": "MIT",
   "main": "built/index.js",
   "typings": "built/index.d.ts",
   "dependencies": {
@@ -14,20 +15,20 @@
   "scripts": {
     "clean": "rm -rf built",
     "compile": "tsc --project lib",
-    "build": "npm run clean && npm run compile"
+    "prepublish": "npm run clean && npm run compile"
   },
   "bin": "built/bin/toundra.js",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/AleksanderPopov/toundra.git"
   },
-  "author": "Alexander Popov <aleksander.popov.93@gmail.com>",
+  "author": "Alexander Popov <alex.popov.tech@gmail.com>",
   "bugs": {
     "url": "https://github.com/AleksanderPopov/toundra/"
   },
   "engines": {
-    "node": ">= 11.4.0"
+    "node": ">= 11.7.0"
   },
   "keywords": [
     "toundra",
