@@ -30,12 +30,13 @@ export class Run {
 
     private async runTest(): Promise<AfterRunTestInfo> {
         let someError: Error = null;
+        const context = {};
         try {
-            await this.data.globalBeforeEach.run();
-            await this.data.beforeEach.run();
-            await this.data.test.run();
-            await this.data.afterEach.run();
-            await this.data.globalAfterEach.run();
+            await this.data.globalBeforeEach.run(context);
+            await this.data.beforeEach.run(context);
+            await this.data.test.run(context);
+            await this.data.afterEach.run(context);
+            await this.data.globalAfterEach.run(context);
         } catch (error) {
             someError = {
                 name: error.message,

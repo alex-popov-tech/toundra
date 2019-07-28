@@ -19,10 +19,10 @@ export class Suite {
         this.isGlobal = suiteData.name === Configuration.GLOBAL_SUITE_NAME;
     }
 
-    async run(threads: number): Promise<AfterRunSuiteInfo> {
+    async run(context, threads: number): Promise<AfterRunSuiteInfo> {
         await this.runOnSuiteStartListeners();
 
-        const beforeHooksError = await this.runBeforeAllHooks();
+        const beforeHooksError = await this.runBeforeAllHooks(context);
         if (beforeHooksError) {
             await this.runOnSuiteFinishListeners('failed', beforeHooksError, null);
             return this.buildAfterRunSuiteInfo('failed', [], beforeHooksError);
@@ -30,7 +30,7 @@ export class Suite {
 
         const testResults: AfterRunTestInfo[] = await this.runTests(threads);
 
-        const afterHooksError = await this.runAfterAllHooks();
+        const afterHooksError = await this.runAfterAllHooks(context);
         if (afterHooksError) {
             await this.runOnSuiteFinishListeners('failed', beforeHooksError, testResults);
             return this.buildAfterRunSuiteInfo('failed', testResults, beforeHooksError);
@@ -40,20 +40,20 @@ export class Suite {
         return this.buildAfterRunSuiteInfo('passed', testResults, null);
     }
 
-    private async runBeforeAllHooks(): Promise<Error> {
-        return this.data.beforeAll.run().then(
+    private async runBeforeAllHooks(context): Promise<Error> {
+        return this.data.beforeAll.run(context).then(
             _ => null,
             error => {
-                return {name: error.name, stack: error.stack};
+                return { name: error.name, stack: error.stack };
             }
         );
     }
 
-    private async runAfterAllHooks(): Promise<Error> {
-        return this.data.afterAll.run().then(
+    private async runAfterAllHooks(context): Promise<Error> {
+        return this.data.afterAll.run(context).then(
             _ => null,
             error => {
-                return {name: error.name, stack: error.stack};
+                return { name: error.name, stack: error.stack };
             }
         );
     }

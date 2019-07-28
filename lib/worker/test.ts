@@ -10,7 +10,7 @@ export class Test {
         this.action = action;
     }
 
-    async run() {
-        await this.action();
+    async run(context) {
+        await this.action(context);
     }
 }

@@ -20,16 +20,17 @@ export class Run {
 
     async run() {
         await this.runOnStartListeners();
+        const context = {};
 
-        const beforeHooksError = await this.runGlobalBeforeAllHooks();
+        const beforeHooksError = await this.runGlobalBeforeAllHooks(context);
         if (beforeHooksError) {
             await this.runOnFinishListeners('failed', beforeHooksError, []);
             return;
         }
 
-        const results: AfterRunSuiteInfo[] = await this.runSuites();
+        const results: AfterRunSuiteInfo[] = await this.runSuites(context);
 
-        const afterHooksError = await this.runGlobalAfterAllHooks();
+        const afterHooksError = await this.runGlobalAfterAllHooks(context);
         if (afterHooksError) {
             await this.runOnFinishListeners('failed', afterHooksError, results);
             return;
@@ -67,29 +68,29 @@ export class Run {
         }
     }
 
-    private async runSuites(): Promise<AfterRunSuiteInfo[]> {
+    private async runSuites(context): Promise<AfterRunSuiteInfo[]> {
         const results: AfterRunSuiteInfo[] = [];
         for (const suite of this.data.suites) {
-            const result = await suite.run(this.threads);
+            const result = await suite.run(context, this.threads);
             results.push(result);
         }
         return results;
     }
 
-    private async runGlobalBeforeAllHooks(): Promise<Error> {
-        return this.data.globalBeforeAll.run().then(
+    private async runGlobalBeforeAllHooks(context): Promise<Error> {
+        return this.data.globalBeforeAll.run(context).then(
             _ => null,
             error => {
-                return {name: error.name, stack: error.stack};
+                return { name: error.name, stack: error.stack };
             }
         );
     }
 
-    private async runGlobalAfterAllHooks(): Promise<Error> {
-        return this.data.globalAfterAll.run().then(
+    private async runGlobalAfterAllHooks(context): Promise<Error> {
+        return this.data.globalAfterAll.run(context).then(
             _ => null,
             error => {
-                return {name: error.name, stack: error.stack};
+                return { name: error.name, stack: error.stack };
             }
         );
     }

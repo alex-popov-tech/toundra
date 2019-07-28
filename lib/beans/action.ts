@@ -1,1 +1,1 @@
-export type Action = () => void | Promise<void>;
+export type Action = (context) => void | Promise<void>;

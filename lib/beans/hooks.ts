@@ -8,9 +8,9 @@ export class Hooks<T extends HookType> {
         this.actions.push(hook);
     }
 
-    async run() {
+    async run(context) {
         for (const action of this.actions) {
-            await action();
+            await action(context);
         }
     }
 }
