@@ -20,17 +20,17 @@ export class Run {
 
     async run() {
         await this.runOnStartListeners();
-        const context = {};
+        const suiteContext = {};
 
-        const beforeHooksError = await this.runGlobalBeforeAllHooks(context);
+        const beforeHooksError = await this.runGlobalBeforeAllHooks(suiteContext);
         if (beforeHooksError) {
             await this.runOnFinishListeners('failed', beforeHooksError, []);
             return;
         }
 
-        const results: AfterRunSuiteInfo[] = await this.runSuites(context);
+        const results: AfterRunSuiteInfo[] = await this.runSuites(suiteContext);
 
-        const afterHooksError = await this.runGlobalAfterAllHooks(context);
+        const afterHooksError = await this.runGlobalAfterAllHooks(suiteContext);
         if (afterHooksError) {
             await this.runOnFinishListeners('failed', afterHooksError, results);
             return;
@@ -45,11 +45,11 @@ export class Run {
         const suitesInfo = this.data.suites.filter(nonGlobalSuite).map(toBeforeRunSuiteInfo);
 
         for (const onStartHandler of this.data.onStartListener) {
-            await onStartHandler({
+            await Promise.resolve().then(_ => onStartHandler({
                 threads: this.threads,
                 globalTests: globalTestsInfo,
                 suites: suitesInfo
-            });
+            })).catch(console.error);
         }
     }
 
@@ -59,12 +59,12 @@ export class Run {
         const usualSuites = suitesResuls.filter(Util.nonGlobalSuiteInfo);
 
         for (const onFinishHandler of this.data.onFinishListener) {
-            await onFinishHandler({
+            await Promise.resolve().then(_ => onFinishHandler({
                 status: status,
                 error: error,
                 globalTests: globalTestsInfo,
                 suites: usualSuites
-            });
+            })).catch(console.error);
         }
     }
 
