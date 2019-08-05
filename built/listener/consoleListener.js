@@ -13,7 +13,7 @@ exports.CONSOLE_LISTENER = {
         result.suites.forEach(globalSuite => globalSuite.tests.forEach(test => test.error ? failedTests.push(test) : passedTests.push(test)));
         process.stdout.write(`\nTests Finished in ${new Date().getTime() - start}ms.` +
             `\nOverall tests - ${passedTests.length + failedTests.length}.` +
-            `\nPassed - ${passedTests.length}. Failed - ${failedTests.length}`);
+            `Passed - ${passedTests.length}. Failed - ${failedTests.length}`);
         if (failedTests.length > 0) {
             const errorMessage = '\nErrors:\n' +
                 failedTests.map((result, i) => `\t${i + 1}) ` + `${result.name}\n` +

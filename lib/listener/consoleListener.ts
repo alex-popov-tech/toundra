@@ -17,7 +17,7 @@ export const CONSOLE_LISTENER: Listener = {
     process.stdout.write(
       `\nTests Finished in ${new Date().getTime() - start}ms.` +
       `\nOverall tests - ${passedTests.length + failedTests.length}.` +
-      `\nPassed - ${passedTests.length}. Failed - ${failedTests.length}`
+      `Passed - ${passedTests.length}. Failed - ${failedTests.length}`
     );
 
     if (failedTests.length > 0) {

@@ -38,7 +38,12 @@ export class Run {
       return this.buildAfterRunTestInfo('failed', err);
     }
 
-    const testError = await this.data.test.run(context).catch(err => {return err});
+    let testError: Error;
+    try {
+      await this.data.test.run(context);
+    } catch (err) {
+      testError = err;
+    }
 
     try {
       await this.data.afterEach.run(context);

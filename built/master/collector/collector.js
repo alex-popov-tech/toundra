@@ -89,8 +89,6 @@ class Collector {
         this.listeners.push(listener);
     }
     parseSpecsMask(specsMasks) {
-        // TODO complex parser for wildcards
-        // complex parse spec files wildcard
         return specsMasks.map(specpath => path.resolve(specpath));
     }
     isLocalSuite() {
