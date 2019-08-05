@@ -1,8 +1,9 @@
+import {OnTestFinishInfo} from './handlers/onTestFinishInfo';
 import {Listener} from './listener';
 
 const start = new Date().getTime();
 let testsCount = 0;
-const failedTests = [];
+const failedTests: OnTestFinishInfo[] = [];
 
 export const CONSOLE_LISTENER: Listener = {
   onStart: (result) => {
@@ -12,7 +13,7 @@ export const CONSOLE_LISTENER: Listener = {
     process.stdout.write(result.error ? 'F' : '.');
     testsCount++;
     if (result.error) {
-      failedTests.push({name: result.name, error: result.error.name, stack: result.error.stack});
+      failedTests.push(result);
     }
   },
   onFinish: _ => {
@@ -20,10 +21,10 @@ export const CONSOLE_LISTENER: Listener = {
     process.stdout.write(`\nOverall tests - ${testsCount}. Passed - ${testsCount - failedTests.length}. Failed - ${failedTests.length}\n`);
     if (failedTests.length > 0) {
       const errorMessage = 'Errors:\n' +
-        failedTests.map((info, i) =>
-          `\t${i + 1}) ` + `${info.name}\n` +
-          `\t\t${info.message}` +
-          `\t\t\t${info.stack}`
+        failedTests.map((result, i) =>
+          `\t${i + 1}) ` + `${result.name}\n` +
+          `\t\t${result.error.name}` +
+          `\t\t\t${result.error.stack}`
         ).join('\n');
       process.stdout.write(`\n${errorMessage}\n`);
     }
