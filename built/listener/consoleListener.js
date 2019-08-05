@@ -1,24 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const start = new Date().getTime();
-let testsCount = 0;
-const failedTests = [];
+let start;
 exports.CONSOLE_LISTENER = {
     onStart: (result) => {
         process.stdout.write(`\nTests Started in ${result.threads} thread(s)\n`);
+        start = new Date().getTime();
     },
-    onTestFinish: result => {
-        process.stdout.write(result.error ? 'F' : '.');
-        testsCount++;
-        if (result.error) {
-            failedTests.push(result);
-        }
-    },
-    onFinish: _ => {
-        process.stdout.write(`\nTests Finished in ${new Date().getTime() - start}ms`);
-        process.stdout.write(`\nOverall tests - ${testsCount}. Passed - ${testsCount - failedTests.length}. Failed - ${failedTests.length}\n`);
+    onFinish: result => {
+        const passedTests = [];
+        const failedTests = [];
+        result.globalTests.forEach(globalTest => globalTest.error ? failedTests.push(globalTest) : passedTests.push(globalTest));
+        result.suites.forEach(globalSuite => globalSuite.tests.forEach(test => test.error ? failedTests.push(test) : passedTests.push(test)));
+        process.stdout.write(`\nTests Finished in ${new Date().getTime() - start}ms.` +
+            `\nOverall tests - ${passedTests.length + failedTests.length}.` +
+            `\nPassed - ${passedTests.length}. Failed - ${failedTests.length}`);
         if (failedTests.length > 0) {
-            const errorMessage = 'Errors:\n' +
+            const errorMessage = '\nErrors:\n' +
                 failedTests.map((result, i) => `\t${i + 1}) ` + `${result.name}\n` +
                     `\t\t${result.error.name}` +
                     `\t\t\t${result.error.stack}`).join('\n');

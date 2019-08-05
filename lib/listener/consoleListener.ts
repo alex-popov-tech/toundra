@@ -1,26 +1,27 @@
-import {OnTestFinishInfo} from './handlers/onTestFinishInfo';
 import {Listener} from './listener';
 
-const start = new Date().getTime();
-let testsCount = 0;
-const failedTests: OnTestFinishInfo[] = [];
+let start: number;
 
 export const CONSOLE_LISTENER: Listener = {
   onStart: (result) => {
     process.stdout.write(`\nTests Started in ${result.threads} thread(s)\n`);
+    start = new Date().getTime();
   },
-  onTestFinish: result => {
-    process.stdout.write(result.error ? 'F' : '.');
-    testsCount++;
-    if (result.error) {
-      failedTests.push(result);
-    }
-  },
-  onFinish: _ => {
-    process.stdout.write(`\nTests Finished in ${new Date().getTime() - start}ms`);
-    process.stdout.write(`\nOverall tests - ${testsCount}. Passed - ${testsCount - failedTests.length}. Failed - ${failedTests.length}\n`);
+  onFinish: result => {
+    const passedTests = [];
+    const failedTests = [];
+
+    result.globalTests.forEach(globalTest => globalTest.error ? failedTests.push(globalTest) : passedTests.push(globalTest));
+    result.suites.forEach(globalSuite => globalSuite.tests.forEach(test => test.error ? failedTests.push(test) : passedTests.push(test)));
+
+    process.stdout.write(
+      `\nTests Finished in ${new Date().getTime() - start}ms.` +
+      `\nOverall tests - ${passedTests.length + failedTests.length}.` +
+      `\nPassed - ${passedTests.length}. Failed - ${failedTests.length}`
+    );
+
     if (failedTests.length > 0) {
-      const errorMessage = 'Errors:\n' +
+      const errorMessage = '\nErrors:\n' +
         failedTests.map((result, i) =>
           `\t${i + 1}) ` + `${result.name}\n` +
           `\t\t${result.error.name}` +
@@ -30,3 +31,4 @@ export const CONSOLE_LISTENER: Listener = {
     }
   }
 };
+
