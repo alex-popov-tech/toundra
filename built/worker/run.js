@@ -15,22 +15,23 @@ class Run {
         return result;
     }
     async runTest() {
-        let someError = null;
         const context = {};
         try {
             await this.data.globalBeforeEach.run(context);
             await this.data.beforeEach.run(context);
-            await this.data.test.run(context);
+        }
+        catch (err) {
+            return this.buildAfterRunTestInfo('failed', err);
+        }
+        const testError = await this.data.test.run(context).catch(err => { return err; });
+        try {
             await this.data.afterEach.run(context);
             await this.data.globalAfterEach.run(context);
         }
-        catch (error) {
-            someError = {
-                name: error.message,
-                stack: error.stack
-            };
+        catch (err) {
+            return this.buildAfterRunTestInfo('failed', testError ? testError : err);
         }
-        return this.buildAfterRunTestInfo(someError ? 'failed' : 'passed', someError);
+        return this.buildAfterRunTestInfo(testError ? 'failed' : 'passed', testError);
     }
     buildAfterRunTestInfo(status, error) {
         return {
