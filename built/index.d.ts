@@ -1,0 +1,16 @@
+import { Api } from './api';
+declare const Test: typeof Api.Test;
+declare const test: typeof Api.Test;
+declare const Suite: typeof Api.Suite;
+declare const suite: typeof Api.Suite;
+declare const BeforeEach: typeof Api.BeforeEach;
+declare const beforeEach: typeof Api.BeforeEach;
+declare const BeforeAll: typeof Api.BeforeAll;
+declare const beforeAll: typeof Api.BeforeAll;
+declare const AfterEach: typeof Api.AfterEach;
+declare const afterEach: typeof Api.AfterEach;
+declare const AfterAll: typeof Api.AfterAll;
+declare const afterAll: typeof Api.AfterAll;
+declare const AddListener: typeof Api.AddListener;
+declare const addListener: typeof Api.AddListener;
+export { Test, test, Suite, suite, BeforeEach, beforeEach, BeforeAll, beforeAll, AfterEach, afterEach, AfterAll, afterAll, AddListener, addListener };
