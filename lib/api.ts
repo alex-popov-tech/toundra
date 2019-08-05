@@ -25,30 +25,30 @@ export namespace Api {
         }
     }
 
-    export function BeforeAll(hook: () => void | Promise<void>) {
+    export function BeforeAll(hook: Action) {
         if (isMainThread) {
             MasterCollector.instance.addHook('BeforeAll', hook);
         }
     }
 
-    export function AfterAll(hook: () => void | Promise<void>) {
+    export function AfterAll(hook: Action) {
         if (isMainThread) {
             MasterCollector.instance.addHook('AfterAll', hook);
         }
     }
 
-    export function BeforeEach(hook: () => void | Promise<void>) {
+    export function BeforeEach(hook: Action) {
         if (!isMainThread) {
             WorkerCollector.instance.addHook('BeforeEach', hook);
         }
     }
 
-    export function AfterEach(hook: () => void | Promise<void>) {
+    export function AfterEach(hook: Action) {
         if (!isMainThread) {
             WorkerCollector.instance.addHook('AfterEach', hook);
         }
     }
-    
+
     export function AddListener(listener: Listener) {
         if (isMainThread) {
             MasterCollector.instance.addListener(listener);

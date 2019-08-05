@@ -34,14 +34,17 @@ export class Run {
         try {
             await this.data.globalBeforeEach.run(context);
             await this.data.beforeEach.run(context);
-            await this.data.test.run(context);
+        } catch (error) {
+            return this.buildAfterRunTestInfo('failed', error);
+        }
+
+        await this.data.test.run(context).catch(error => { someError = error });
+
+        try {
             await this.data.afterEach.run(context);
             await this.data.globalAfterEach.run(context);
         } catch (error) {
-            someError = {
-                name: error.message,
-                stack: error.stack
-            };
+            return this.buildAfterRunTestInfo('failed', someError ? someError : error);
         }
 
         return this.buildAfterRunTestInfo(someError ? 'failed' : 'passed', someError);
